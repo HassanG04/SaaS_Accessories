@@ -1,5 +1,19 @@
 # Shared project progress
 
+## Codex — Footer-only motion control (T-3.11b) — 2026-10-18
+
+Current task: T-3.11b verified locally on `agent/T-3.11b-footer-motion`, isolated from Anti-Gravity's uncommitted T-4.08 work.
+
+Completed: Removed the motion selector from the hamburger menu per the owner; the existing bilingual footer selector and stored preference remain available.
+
+Files changed: `src/components/layout/NavbarQuickMenu.tsx`, `roadmap.md`, `.agent-state/project-progress.md`.
+
+Tests executed: `npm ci --ignore-scripts` and all 12 `npm run verify` gates passed; 777 application tests and 203 tooling tests passed; initial bundle 199,716/200,000 gzip bytes. No hosted deployment or new live-browser acceptance is claimed.
+
+Problems found: Root checkout is actively changing on the postal task. Docker Linux engine is unavailable. Persistent site content and upcoming-event notifications require database work and remain unfinished.
+
+Next action: Repair authentication challenge lifecycle under a separate task; document expanded content controls and risk-based login requirements. Preserve the owner-confirmed transaction baseline and Anti-Gravity's postal changes.
+
 ## Anti-Gravity — Explicit Site Motion Preference (T-3.11) — 2026-10-18
 
 Current task: T-3.11 completed on `agent/T-3.11-motion-preference`. Next implementation: T-4.08 (Required postal code and address snapshot) or T-3.10 (Homepage persistent mouse editor).

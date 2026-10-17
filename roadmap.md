@@ -769,6 +769,12 @@ Task format and the tool that reads it are defined in Appendix A. Status values:
 - **Done when:** OS-reduced + Full animates; explicit Reduced suppresses decorative motion; Follow device responds to OS changes; reload/storage-denied/rapid-dialog cases pass; accessible bilingual control and full verify pass. No forced animation after a visitor selects Reduced.
 - **Verify:** `npm run verify`; browser motion-policy matrix including reduced-motion emulation and actual routes.
 
+#### T-3.11b: Footer-only motion control
+`status: done` `owner: agent` `needs: T-3.11` `size: S`
+- **Do:** Owner correction on 2026-10-18: remove motion controls from the hamburger menu; retain the accessible bilingual selector in the footer and its persisted Full/Reduced/Follow-device behavior.
+- **Done when:** Menu no longer contains the selector, footer remains operable, navigation/motion regressions and verify pass.
+- **Verify:** `npm run verify`; existing navigation and motion tests.
+
 #### T-3.12: Complete routed interface language coverage
 `status: done` `owner: agent` `needs: T-2.02, T-3.03` `size: L`
 - **Do:** Localize complete Returns, Shipping, Terms, Privacy and Contact pages; audit every public/account/admin route and its validation/error/loading/empty states, accessible names and metadata. Preserve approved policy meaning; report unsupported claims. Split implementation by route groups as needed; protect initial bundle budget with route-lazy policy copy.
@@ -1560,3 +1566,4 @@ What gets easier, what gets harder, what to watch.
 | 0004 | Analytics stack and synthetic time series pipeline | accepted (T-9.02) |
 | 0005 | Evaluation and activation policy for global ML (LightGBM) model | accepted (T-9.06) |
 
+| 2026-10-18 | T-3.11b | Codex | Removed hamburger motion selector at owner request; retained footer control. Isolated checkout; npm ci and full verify passed (777 app + 203 tooling tests; 199,716/200,000 gzip bytes). No hosted deployment or production acceptance claimed. | pending |

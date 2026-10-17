@@ -4,7 +4,6 @@ import { useLanguage } from '../../i18n/LanguageProvider'
 import { AuthContext } from '../../features/auth/AuthProvider'
 import { ToastContext } from '../ui/ToastProvider'
 import { SocialMenuLinks } from './SocialMenuLinks'
-import { MotionSelect } from '../ui/MotionSelect'
 
 interface NavbarQuickMenuProps {
   onClose: () => void
@@ -260,9 +259,6 @@ export default function NavbarQuickMenu({ onClose }: NavbarQuickMenuProps) {
           {t.account.orders}
         </Link>
       )}
-      <div className="pt-1 pb-1">
-        <MotionSelect variant="compact" id="menu-motion-select" />
-      </div>
       <SocialMenuLinks onClose={onClose} />
     </div>
   )
