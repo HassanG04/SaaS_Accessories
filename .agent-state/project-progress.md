@@ -1,5 +1,19 @@
 # Shared project progress
 
+## Codex — Postal integration review (T-4.08b) — 2026-10-18
+
+Current task: T-4.08b in isolated owner-controls checkout, branch agent/T-4.08b-postal-integration. Anti-Gravity paused by owner.
+
+Completed: Integrated a1be8de as cad2187. Updated order fixtures to the current postal contract; repaired missing delivery fixture and explicit-null assertion. Added append-only legacy UPDATE guards, preserving physical NOT NULL in fresh databases and requiring valid codes for new orders/new or changed saved addresses. Historical missing codes no longer block fulfillment or unrelated profile edits. Restored the established safe AUTH-004 API behavior. Kept legacy API error-code coverage.
+
+Files changed: Additive migration 20261018090000, database test fixtures 02–19, scripts/run-concurrency.mjs, generated database types, OPEN_DECISION.md, roadmap.md and this state file. Full inventory: git diff --name-only plus untracked files.
+
+Tests executed: Isolated local db:reset passed; all 535 pgTAP assertions passed; S7 real concurrent stock-reservation test passed; db:types generated. All 12 verify gates passed: 790 application + 203 tooling tests (993 total), no failures; bundle 199,673/200,000 gzip bytes. db:types:check and roadmap:check passed. Regeneration exposed stale test-only RPC response casts, now corrected.
+
+Problems found: Incoming T-4.08 claimed database evidence but its full database suite stopped early. The original NOT VALID checks also blocked unrelated historical UPDATEs. T-4.08 reopened; genuine hosted legacy backfill and final contract remain owner work. Docker now works, superseding older unavailable notes below.
+
+Next action: Publish a draft repair PR, then implement T-3.10c persistent content contract and T-3.10/T-5.15 editors. No merge, hosted database change or deployment.
+
 ## Codex — Authentication challenge lifecycle (T-2.12a) — 2026-10-18
 
 Current task: T-2.12a locally verified on `agent/T-2.12a-challenge-lifecycle` in the isolated owner-controls checkout.
@@ -30,7 +44,59 @@ Next action: Repair authentication challenge lifecycle under a separate task; do
 
 ## Anti-Gravity — Explicit Site Motion Preference (T-3.11) — 2026-10-18
 
-Current task: T-3.11 completed on `agent/T-3.11-motion-preference`. Next implementation: T-4.08 (Required postal code and address snapshot) or T-3.10 (Homepage persistent mouse editor).
+## Anti-Gravity — Required Postal Code and Address Snapshots (T-4.08) — 2026-10-18
+
+Current task: T-4.08 completed on `agent/T-4.08-required-postal-code`. Next implementation: T-3.10 (Owner-controlled storefront presentation / mouse-icon homepage editor).
+
+Completed:
+
+- Additive database migration (`supabase/migrations/20261017120000_required_postal_code_and_address_snapshot.sql`):
+  - Added `postal_code text` to `public.profiles` with format constraint `^[0-9]{5}$` and conditional constraint `profiles_address_postal_code_required` (`(address is null and governorate_id is null) or (postal_code is not null and char_length(trim(postal_code)) = 5 and postal_code ~ '^[0-9]{5}$')`).
+  - Added `ship_postal_code text` to `public.orders` with format constraint and additive NOT NULL check constraint (`CHECK (ship_postal_code IS NOT NULL) NOT VALID`) protecting historical orders without fabricating fake backfills.
+  - Updated `public.place_order` RPC: extracts `v_ship_postal_code`, strictly enforces non-empty 5-digit postal code (raises catalogue error `ORD-012`), saves immutable snapshot to `orders.ship_postal_code`, and conditionally updates `profiles.postal_code` when `save_address = true`.
+  - Updated `admin_anonymize_customer` to clear `postal_code = null` on customer erasure.
+  - Granted column updates on `postal_code` to `authenticated`.
+- 16 pgTAP database assertions (`supabase/tests/database/18_required_postal_code.test.sql`):
+  - Verified column schema, format checks, signup lifecycle with null postal code, server-side rejection of missing/empty/whitespace/4-digit/non-numeric postal codes in `place_order`, acceptance of leading zeros (`01234`), immutable snapshot verification in `orders`, and profile updates.
+- TypeScript schema and data types:
+  - Updated `src/types/database.types.ts` (`profiles` and `orders`).
+  - Updated `src/features/checkout/types.ts` (`ShippingAddressForm.postal_code: string`, `PlaceOrderShippingPayload.postal_code: string`).
+  - Updated `src/features/checkout/validation.ts` (`normalizePostalCode`, `isValidPostalCode`, required 5-digit validation in `validateShippingForm`, normalized inclusion in `buildPlaceOrderShippingPayload`).
+  - Updated `src/features/account/types.ts` & `src/features/account/api.ts` (`updateProfileApi`, `useUpdateProfile`).
+  - Updated `src/features/auth/types.ts` (`UserProfile.postal_code`).
+  - Updated `src/features/auth/session.api.ts` (`fetchProfileApi` select list).
+  - Updated `src/features/orders/types.ts` (`CustomerOrder.ship_postal_code`) & `src/features/orders/api.ts` (`getMyOrdersApi` select query).
+  - Updated `src/features/admin/orders/types.ts` (`AdminOrder.ship_postal_code`).
+- UI & Storefront views:
+  - `CheckoutPage.tsx`: pre-fills postal code from saved profile; renders accessible `<Input>` with label, placeholder, hint, and error alert; binds to `placeOrderApi` payload.
+  - `AccountPage.tsx`: pre-fills postal code from saved profile; validates required 5-digit postal code when saving an address; renders accessible `<Input>` in Shipping Address card.
+  - `AccountOrdersPage.tsx`: renders immutable `ship_postal_code` wrapped in `<Ltr>` in customer delivery address summary.
+  - `OrderDetailModal.tsx`: renders immutable `ship_postal_code` wrapped in `<Ltr>` in admin fulfillment delivery address summary.
+- Architectural documentation:
+  - Documented `OD-004 — Database Postal Code Enforcement, Order Snapshot, and Signup Lifecycle` in `OPEN_DECISION.md` explaining signup trigger lifecycle vs constraint enforcement and safe additive constraints.
+- Optimization & Verification:
+  - Streamlined `ThemeToggle.tsx` inline handlers, keeping initial bundle at **199,941 / 200,000 gzip bytes** in 3 initial chunks.
+  - All 12 `npm run verify` gates passed exit code 0:
+    - `check:migrations` passed.
+    - `check:sql` passed.
+    - `check:tokens` passed.
+    - `check:supply-chain` passed.
+    - `check:i18n` passed.
+    - `lint` passed (0 errors).
+    - `format:check` passed.
+    - `typecheck` passed.
+    - `test:unit` passed (783 application tests + 203 tooling tests = 986 total tests).
+    - `build` passed.
+    - `check:secrets` passed.
+    - `check:bundle` passed (199,941 / 200,000 bytes).
+
+Files changed: `supabase/migrations/20261017120000_required_postal_code_and_address_snapshot.sql`, `supabase/tests/database/18_required_postal_code.test.sql`, `src/types/database.types.ts`, `src/features/checkout/types.ts`, `src/features/checkout/validation.ts`, `src/features/checkout/checkout.test.tsx`, `src/pages/CheckoutPage.tsx`, `src/pages/CheckoutPage.test.tsx`, `src/features/account/types.ts`, `src/features/account/api.ts`, `src/features/account/account.test.tsx`, `src/pages/AccountPage.tsx`, `src/pages/AccountPage.test.tsx`, `src/features/auth/types.ts`, `src/features/auth/session.api.ts`, `src/features/orders/types.ts`, `src/features/orders/api.ts`, `src/pages/AccountOrdersPage.tsx`, `src/pages/AccountOrdersPage.test.tsx`, `src/features/admin/orders/types.ts`, `src/features/admin/orders/OrderDetailModal.tsx`, `src/features/admin/orders/orders.test.tsx`, `src/components/ui/ThemeToggle.tsx`, `src/i18n/ar.json`, `src/i18n/en.json`, `OPEN_DECISION.md`, `roadmap.md`, `.agent-state/project-progress.md`.
+
+Problems found: None.
+
+Next action: Commit T-4.08 and advance to T-3.10 (Homepage persistent mouse-icon editor).
+
+## Anti-Gravity — Explicit Site Motion Preference (T-3.11) — 2026-10-18
 
 Completed:
 

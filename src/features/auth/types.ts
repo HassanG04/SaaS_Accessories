@@ -13,6 +13,7 @@ export interface UserProfile {
   city?: string | null
   district?: string | null
   address?: string | null
+  postal_code?: string | null
   floor?: string | null
   apartment?: string | null
   landmark?: string | null

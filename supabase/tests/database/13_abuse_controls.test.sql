@@ -51,10 +51,11 @@ SELECT tests.authenticate_as('customer_s27');
 -- 1. Quantity 0 is rejected with ORD-006 (22023)
 SELECT throws_ok(
     format($$SELECT public.place_order(
-        jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 0)),
-        'representative', 'cod',
-        jsonb_build_object('name', 'Ali', 'phone', '01011110027', 'governorate_id', 1, 'address', 'Addr')
-    )$$, :s27_product_id),
+    jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 0)),
+    'representative',
+    'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Ali', 'phone', '01011110027', 'governorate_id', 1, 'address', 'Addr')
+)$$, :s27_product_id),
     '22023',
     'Quantity must be between 1 and 20',
     'S27: Quantity 0 rejected with ORD-006'
@@ -63,10 +64,11 @@ SELECT throws_ok(
 -- 2. Quantity 21 (> 20) is rejected with ORD-006 (22023)
 SELECT throws_ok(
     format($$SELECT public.place_order(
-        jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 21)),
-        'representative', 'cod',
-        jsonb_build_object('name', 'Ali', 'phone', '01011110027', 'governorate_id', 1, 'address', 'Addr')
-    )$$, :s27_product_id),
+    jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 21)),
+    'representative',
+    'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Ali', 'phone', '01011110027', 'governorate_id', 1, 'address', 'Addr')
+)$$, :s27_product_id),
     '22023',
     'Quantity must be between 1 and 20',
     'S27: Quantity > 20 rejected with ORD-006'
@@ -75,10 +77,11 @@ SELECT throws_ok(
 -- 3. More than 30 lines in cart rejected with ORD-013 (22023)
 SELECT throws_ok(
     format($$SELECT public.place_order(
-        (SELECT jsonb_agg(jsonb_build_object('product_id', %s, 'quantity', 1)) FROM generate_series(1, 31)),
-        'representative', 'cod',
-        jsonb_build_object('name', 'Ali', 'phone', '01011110027', 'governorate_id', 1, 'address', 'Addr')
-    )$$, :s27_product_id),
+    (SELECT jsonb_agg(jsonb_build_object('product_id', %s, 'quantity', 1)) FROM generate_series(1, 31)),
+    'representative',
+    'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Ali', 'phone', '01011110027', 'governorate_id', 1, 'address', 'Addr')
+)$$, :s27_product_id),
     '22023',
     'Too many items in order',
     'S27: More than 30 order lines rejected with ORD-013'
@@ -91,8 +94,9 @@ SELECT throws_ok(
 -- 4. 1st pending order succeeds
 SELECT public.place_order(
     jsonb_build_array(jsonb_build_object('product_id', :s27_product_id, 'quantity', 1)),
-    'representative', 'cod',
-    jsonb_build_object('name', 'Ali', 'phone', '01011110027', 'governorate_id', 1, 'address', 'Addr 1')
+    'representative',
+    'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Ali', 'phone', '01011110027', 'governorate_id', 1, 'address', 'Addr 1')
 ) AS s27_order_1 \gset
 
 SELECT is(
@@ -104,8 +108,9 @@ SELECT is(
 -- 5. 2nd pending order succeeds
 SELECT public.place_order(
     jsonb_build_array(jsonb_build_object('product_id', :s27_product_id, 'quantity', 1)),
-    'representative', 'cod',
-    jsonb_build_object('name', 'Ali', 'phone', '01011110027', 'governorate_id', 1, 'address', 'Addr 2')
+    'representative',
+    'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Ali', 'phone', '01011110027', 'governorate_id', 1, 'address', 'Addr 2')
 ) AS s27_order_2 \gset
 
 SELECT is(
@@ -117,8 +122,9 @@ SELECT is(
 -- 6. 3rd pending order succeeds
 SELECT public.place_order(
     jsonb_build_array(jsonb_build_object('product_id', :s27_product_id, 'quantity', 1)),
-    'representative', 'cod',
-    jsonb_build_object('name', 'Ali', 'phone', '01011110027', 'governorate_id', 1, 'address', 'Addr 3')
+    'representative',
+    'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Ali', 'phone', '01011110027', 'governorate_id', 1, 'address', 'Addr 3')
 ) AS s27_order_3 \gset
 
 SELECT is(
@@ -130,10 +136,11 @@ SELECT is(
 -- 7. 4th pending order is rejected with ORD-010 (22023)
 SELECT throws_ok(
     format($$SELECT public.place_order(
-        jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 1)),
-        'representative', 'cod',
-        jsonb_build_object('name', 'Ali', 'phone', '01011110027', 'governorate_id', 1, 'address', 'Addr 4')
-    )$$, :s27_product_id),
+    jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 1)),
+    'representative',
+    'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Ali', 'phone', '01011110027', 'governorate_id', 1, 'address', 'Addr 4')
+)$$, :s27_product_id),
     '22023',
     'Pending orders limit reached',
     'S27: 4th pending order rejected with ORD-010'
@@ -156,10 +163,11 @@ SELECT is(
 -- 10. Customer can now place another pending order
 SELECT lives_ok(
     format($$SELECT public.place_order(
-        jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 1)),
-        'representative', 'cod',
-        jsonb_build_object('name', 'Ali', 'phone', '01011110027', 'governorate_id', 1, 'address', 'Addr 5')
-    )$$, :s27_product_id),
+    jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 1)),
+    'representative',
+    'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Ali', 'phone', '01011110027', 'governorate_id', 1, 'address', 'Addr 5')
+)$$, :s27_product_id),
     'S27: Customer can place an order after freeing a pending slot'
 );
 
@@ -177,10 +185,11 @@ SELECT is(
 SELECT tests.authenticate_as('customer_s27');
 SELECT lives_ok(
     format($$SELECT public.place_order(
-        jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 1)),
-        'representative', 'cod',
-        jsonb_build_object('name', 'Ali', 'phone', '01011110027', 'governorate_id', 1, 'address', 'Addr 6')
-    )$$, :s27_product_id),
+    jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 1)),
+    'representative',
+    'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Ali', 'phone', '01011110027', 'governorate_id', 1, 'address', 'Addr 6')
+)$$, :s27_product_id),
     'S27: Customer can place 4th pending order when limit is 5'
 );
 

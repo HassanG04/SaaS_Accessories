@@ -33,6 +33,7 @@ const mockOrders: CustomerOrder[] = [
     ship_city: 'مدينة نصر',
     ship_district: 'الحي السابع',
     ship_address: 'شارع الطيران عمارة 15',
+    ship_postal_code: '11511',
     ship_floor: '4',
     ship_apartment: '12',
     ship_landmark: 'بجوار مسجد النور',
@@ -224,6 +225,9 @@ describe('AccountOrdersPage', () => {
 
     // Postal tracking number displayed
     expect(screen.getByText('EG123456789')).toBeInTheDocument()
+
+    // Postal code displayed
+    expect(screen.getByText('11511')).toBeInTheDocument()
 
     // Representative info displayed
     expect(screen.getByText('محمد مندوب')).toBeInTheDocument()

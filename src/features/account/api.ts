@@ -31,6 +31,7 @@ export async function updateProfileApi(userId: string, input: UpdateProfileInput
       city: input.city?.trim() || null,
       district: input.district?.trim() || null,
       address: input.address?.trim() || null,
+      postal_code: input.postal_code?.trim() || null,
       floor: input.floor?.trim() || null,
       apartment: input.apartment?.trim() || null,
       landmark: input.landmark?.trim() || null,

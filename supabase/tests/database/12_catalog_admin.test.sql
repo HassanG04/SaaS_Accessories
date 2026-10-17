@@ -68,7 +68,7 @@ SELECT public.place_order(
     jsonb_build_array(jsonb_build_object('product_id', :s26_prod_ordered, 'quantity', 1)),
     'representative',
     'cod',
-    jsonb_build_object('name', 'Cust S26', 'phone', '01022220026', 'governorate_id', 1, 'address', 'Address S26')
+    jsonb_build_object('postal_code', '11511', 'name', 'Cust S26', 'phone', '01022220026', 'governorate_id', 1, 'address', 'Address S26')
 );
 
 -- ============================================================================

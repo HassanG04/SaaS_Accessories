@@ -40,6 +40,7 @@ export interface AdminOrder {
   ship_city: string | null
   ship_district: string | null
   ship_address: string
+  ship_postal_code?: string | null
   ship_floor: string | null
   ship_apartment: string | null
   ship_landmark: string | null

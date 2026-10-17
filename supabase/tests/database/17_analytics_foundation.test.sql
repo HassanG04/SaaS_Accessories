@@ -90,7 +90,7 @@ SELECT public.place_order(
     jsonb_build_array(jsonb_build_object('product_id', :prod_id, 'quantity', 3)),
     'representative'::public.delivery_method,
     'cod'::public.payment_method,
-    jsonb_build_object(
+    jsonb_build_object('postal_code', '11511',
         'name', 'Analytics Customer',
         'phone', '01088887777',
         'governorate_id', 1,

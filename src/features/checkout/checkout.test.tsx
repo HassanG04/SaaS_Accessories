@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import {
   normalizeEgyptianPhone,
   isValidEgyptianPhone,
+  normalizePostalCode,
+  isValidPostalCode,
   validateShippingForm,
   buildPlaceOrderShippingPayload,
 } from './validation'
@@ -10,7 +12,7 @@ import { getSupabase } from '@/lib/supabase'
 import type { ShippingAddressForm } from './types'
 import { AppError } from '@/lib/errors'
 
-describe('Checkout Validation and Utilities (T-4.02)', () => {
+describe('Checkout Validation and Utilities (T-4.02 / T-4.08)', () => {
   describe('normalizeEgyptianPhone', () => {
     it('normalizes standard 11-digit Egyptian numbers', () => {
       expect(normalizeEgyptianPhone('01012345678')).toBe('01012345678')
@@ -44,6 +46,35 @@ describe('Checkout Validation and Utilities (T-4.02)', () => {
     })
   })
 
+  describe('normalizePostalCode & isValidPostalCode (T-4.08)', () => {
+    it('preserves leading zeros and standard 5-digit postal codes', () => {
+      expect(normalizePostalCode('01234')).toBe('01234')
+      expect(isValidPostalCode('01234')).toBe(true)
+      expect(normalizePostalCode('11511')).toBe('11511')
+      expect(isValidPostalCode('11511')).toBe(true)
+    })
+
+    it('normalizes Arabic-Indic digits to ASCII and preserves leading zeros', () => {
+      expect(normalizePostalCode('٠١٢٣٤')).toBe('01234')
+      expect(isValidPostalCode('٠١٢٣٤')).toBe(true)
+      expect(normalizePostalCode('١١٥١١')).toBe('11511')
+      expect(isValidPostalCode('١١٥١١')).toBe(true)
+    })
+
+    it('strips internal and surrounding whitespace and hyphens', () => {
+      expect(normalizePostalCode(' 11 511 ')).toBe('11511')
+      expect(normalizePostalCode('11-511')).toBe('11511')
+      expect(isValidPostalCode(' 11-511 ')).toBe(true)
+    })
+
+    it('rejects codes that are not exactly 5 digits', () => {
+      expect(isValidPostalCode('1234')).toBe(false)
+      expect(isValidPostalCode('123456')).toBe(false)
+      expect(isValidPostalCode('abcde')).toBe(false)
+      expect(isValidPostalCode('')).toBe(false)
+    })
+  })
+
   describe('isValidEgyptianPhone', () => {
     it('accepts valid 11-digit mobile operators', () => {
       expect(isValidEgyptianPhone('01012345678')).toBe(true) // Vodafone
@@ -73,6 +104,7 @@ describe('Checkout Validation and Utilities (T-4.02)', () => {
       city: 'مدينة نصر',
       district: 'حي السفارات',
       address: 'شارع عباس العقاد عمارة 15',
+      postal_code: '11511',
       floor: '3',
       apartment: '12',
       landmark: 'بجوار بنك مصر',
@@ -167,6 +199,7 @@ describe('Checkout Validation and Utilities (T-4.02)', () => {
         city: '  ',
         district: 'الزمالك',
         address: ' 10 شارع البرازيل ',
+        postal_code: '  ١١٥١١  ',
         floor: '',
         apartment: '  ',
         landmark: '',
@@ -182,6 +215,7 @@ describe('Checkout Validation and Utilities (T-4.02)', () => {
         city: null,
         district: 'الزمالك',
         address: '10 شارع البرازيل',
+        postal_code: '11511',
         floor: null,
         apartment: null,
         landmark: null,
@@ -200,7 +234,7 @@ describe('placeOrderApi', () => {
     const rpcSpy = vi.spyOn(getSupabase(), 'rpc').mockResolvedValue({
       data: 1045,
       error: null,
-    } as unknown as ReturnType<ReturnType<typeof getSupabase>['rpc']>)
+    } as unknown as Awaited<ReturnType<ReturnType<typeof getSupabase>['rpc']>>)
 
     const result = await placeOrderApi({
       items: [{ product_id: 1, quantity: 2 }],
@@ -211,6 +245,7 @@ describe('placeOrderApi', () => {
         phone: '01012345678',
         governorate_id: 1,
         address: '15 شارع النصر',
+        postal_code: '11511',
       },
     })
 
@@ -223,6 +258,7 @@ describe('placeOrderApi', () => {
         phone: '01012345678',
         governorate_id: 1,
         address: '15 شارع النصر',
+        postal_code: '11511',
         save_address: true,
       },
     })
@@ -238,7 +274,7 @@ describe('placeOrderApi', () => {
         hint: 'ORD-007',
         detail: 'left=2',
       },
-    } as unknown as ReturnType<ReturnType<typeof getSupabase>['rpc']>)
+    } as unknown as Awaited<ReturnType<ReturnType<typeof getSupabase>['rpc']>>)
 
     await expect(
       placeOrderApi({
@@ -250,6 +286,7 @@ describe('placeOrderApi', () => {
           phone: '01012345678',
           governorate_id: 1,
           address: '15 شارع النصر',
+          postal_code: '11511',
         },
       }),
     ).rejects.toThrow(AppError)

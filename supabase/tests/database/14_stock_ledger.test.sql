@@ -77,8 +77,9 @@ SELECT tests.authenticate_as('customer_s29');
 
 SELECT public.place_order(
     jsonb_build_array(jsonb_build_object('product_id', :s29_prod_id, 'quantity', 3)),
-    'representative', 'cod',
-    jsonb_build_object('name', 'Omar', 'phone', '01022220029', 'governorate_id', 1, 'address', 'Nasr City')
+    'representative',
+    'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Omar', 'phone', '01022220029', 'governorate_id', 1, 'address', 'Nasr City')
 ) AS s29_order_id \gset
 
 -- 3. Product stock decremented to 47

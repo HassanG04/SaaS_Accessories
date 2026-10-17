@@ -82,6 +82,7 @@ const mockProfile: UserProfile = {
   city: 'مدينة نصر',
   district: 'المنطقة الأولى',
   address: '12 شارع الطيران',
+  postal_code: '11511',
   floor: '4',
   apartment: '8',
   landmark: 'أمام حديقة الطفل',
@@ -202,6 +203,7 @@ describe('CheckoutPage (T-4.02)', () => {
       expect(screen.getByDisplayValue('01123456789')).toBeInTheDocument()
       expect(screen.getByDisplayValue('12 شارع الطيران')).toBeInTheDocument()
       expect(screen.getByDisplayValue('مدينة نصر')).toBeInTheDocument()
+      expect(screen.getByDisplayValue('11511')).toBeInTheDocument()
     })
   })
 
@@ -243,6 +245,7 @@ describe('CheckoutPage (T-4.02)', () => {
             phone: '01012345678',
             governorate_id: 1,
             address: '12 شارع الطيران',
+            postal_code: '11511',
           }),
         }),
       )

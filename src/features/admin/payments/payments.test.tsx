@@ -268,9 +268,10 @@ describe('Admin Payment Review API', () => {
   })
 
   it('reviews payment via admin_review_payment RPC (approve)', async () => {
-    vi.mocked(supabase.rpc).mockResolvedValue({ data: null, error: null } as unknown as ReturnType<
-      typeof supabase.rpc
-    >)
+    vi.mocked(supabase.rpc).mockResolvedValue({
+      data: null,
+      error: null,
+    } as unknown as unknown as Awaited<ReturnType<typeof supabase.rpc>>)
 
     await api.adminReviewPayment({
       orderId: 201,
@@ -286,9 +287,10 @@ describe('Admin Payment Review API', () => {
   })
 
   it('reviews payment via admin_review_payment RPC (reject with note)', async () => {
-    vi.mocked(supabase.rpc).mockResolvedValue({ data: null, error: null } as unknown as ReturnType<
-      typeof supabase.rpc
-    >)
+    vi.mocked(supabase.rpc).mockResolvedValue({
+      data: null,
+      error: null,
+    } as unknown as unknown as Awaited<ReturnType<typeof supabase.rpc>>)
 
     await api.adminReviewPayment({
       orderId: 202,
@@ -307,7 +309,7 @@ describe('Admin Payment Review API', () => {
     vi.mocked(supabase.rpc).mockResolvedValue({
       data: null,
       error: { message: 'Order is already paid', hint: 'PAY-002', code: '22023' },
-    } as unknown as ReturnType<typeof supabase.rpc>)
+    } as unknown as Awaited<ReturnType<typeof supabase.rpc>>)
 
     await expect(
       api.adminReviewPayment({
@@ -469,9 +471,10 @@ describe('PaymentsPage UI & Interactivity', () => {
       select: vi.fn().mockReturnValue(mockOrderBuilder),
     } as unknown as ReturnType<typeof supabase.from>)
 
-    vi.mocked(supabase.rpc).mockResolvedValue({ data: null, error: null } as unknown as ReturnType<
-      typeof supabase.rpc
-    >)
+    vi.mocked(supabase.rpc).mockResolvedValue({
+      data: null,
+      error: null,
+    } as unknown as unknown as Awaited<ReturnType<typeof supabase.rpc>>)
 
     renderWithProviders(<PaymentsPage />)
 
@@ -511,9 +514,10 @@ describe('PaymentsPage UI & Interactivity', () => {
       select: vi.fn().mockReturnValue(mockOrderBuilder),
     } as unknown as ReturnType<typeof supabase.from>)
 
-    vi.mocked(supabase.rpc).mockResolvedValue({ data: null, error: null } as unknown as ReturnType<
-      typeof supabase.rpc
-    >)
+    vi.mocked(supabase.rpc).mockResolvedValue({
+      data: null,
+      error: null,
+    } as unknown as unknown as Awaited<ReturnType<typeof supabase.rpc>>)
 
     renderWithProviders(<PaymentsPage />)
 

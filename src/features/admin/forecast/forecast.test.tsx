@@ -230,7 +230,7 @@ describe('T-9.10: Admin Forecast & Reorder Screens', () => {
           hint: 'AUTH-011',
           code: '42501',
         },
-      } as unknown as ReturnType<typeof supabase.rpc>)
+      } as unknown as Awaited<ReturnType<typeof supabase.rpc>>)
 
       await expect(api.getAdminForecasts('shop')).rejects.toMatchObject({
         code: '42501',
@@ -248,7 +248,7 @@ describe('T-9.10: Admin Forecast & Reorder Screens', () => {
           hint: 'ADM-002',
           code: '42501',
         },
-      } as unknown as ReturnType<typeof supabase.rpc>)
+      } as unknown as Awaited<ReturnType<typeof supabase.rpc>>)
 
       await expect(api.getAdminReorderList(7, 1.28)).rejects.toMatchObject({
         code: '42501',
@@ -292,7 +292,7 @@ describe('T-9.10: Admin Forecast & Reorder Screens', () => {
           history: [{ day: '2026-10-14', units: 10, revenue: 1000 }],
         },
         error: null,
-      } as unknown as ReturnType<typeof supabase.rpc>)
+      } as unknown as Awaited<ReturnType<typeof supabase.rpc>>)
 
       const result = await api.getAdminForecasts('shop')
       expect(result.status).toBe('ok')

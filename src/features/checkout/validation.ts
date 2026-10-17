@@ -47,12 +47,38 @@ export function isValidEgyptianPhone(phone: string): boolean {
   return /^01[0125]\d{8}$/.test(normalized)
 }
 
+/**
+ * Normalizes a postal code:
+ * - Converts Arabic-Indic numerals (٠-٩) to standard ASCII digits (0-9).
+ * - Strips whitespace and dashes.
+ * - Preserves leading zeros (e.g. '01234').
+ */
+export function normalizePostalCode(input: string): string {
+  if (!input) return ''
+  const arabicIndic = '٠١٢٣٤٥٦٧٨٩'
+  const normalized = input.replace(/[٠-٩]/g, (char) => {
+    const idx = arabicIndic.indexOf(char)
+    return idx >= 0 ? String(idx) : char
+  })
+  return normalized.trim().replace(/[\s-]/g, '')
+}
+
+/**
+ * Checks if a string is a valid Egyptian postal code.
+ * Must be exactly 5 numeric digits, preserving any leading zeros.
+ */
+export function isValidPostalCode(code: string): boolean {
+  const normalized = normalizePostalCode(code)
+  return /^\d{5}$/.test(normalized)
+}
+
 export interface ValidationErrors {
   name?: string
   phone?: string
   alt_phone?: string
   governorate_id?: string
   address?: string
+  postal_code?: string
   city?: string
   district?: string
   floor?: string
@@ -113,6 +139,14 @@ export function validateShippingForm(
     errors.address = 'العنوان يجب ألا يتجاوز 150 حرفًا'
   }
 
+  // Postal Code (required, exactly 5 digits, preserves leading zeros)
+  const normPostal = normalizePostalCode(form.postal_code || '')
+  if (!normPostal) {
+    errors.postal_code = 'الرمز البريدي مطلوب'
+  } else if (!/^\d{5}$/.test(normPostal)) {
+    errors.postal_code = 'الرمز البريدي غير صحيح (يجب أن يتكون من 5 أرقام)'
+  }
+
   // City (optional, max 150)
   if (form.city.trim().length > 150) {
     errors.city = 'اسم المدينة أو المركز يجب ألا يتجاوز 150 حرفًا'
@@ -165,6 +199,7 @@ export function buildPlaceOrderShippingPayload(
 ): PlaceOrderShippingPayload {
   const normPhone = normalizeEgyptianPhone(form.phone)
   const normAltPhone = form.alt_phone.trim() ? normalizeEgyptianPhone(form.alt_phone) : null
+  const normPostal = normalizePostalCode(form.postal_code || '')
 
   return {
     name: form.name.trim(),
@@ -174,6 +209,7 @@ export function buildPlaceOrderShippingPayload(
     city: form.city.trim() || null,
     district: form.district.trim() || null,
     address: form.address.trim(),
+    postal_code: normPostal,
     floor: form.floor.trim() || null,
     apartment: form.apartment.trim() || null,
     landmark: form.landmark.trim() || null,

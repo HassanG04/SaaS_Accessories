@@ -75,9 +75,10 @@ SELECT tests.clear_authentication();
 SET LOCAL ROLE authenticated;
 SELECT tests.assert_error_code(
     $$SELECT public.place_order(
-        jsonb_build_array(jsonb_build_object('product_id', 1, 'quantity', 1)),
-        'representative', 'Anon', '010', 1::smallint, 'City', 'Addr'
-    )$$,
+    jsonb_build_array(jsonb_build_object('product_id', 1, 'quantity', 1)),
+    'representative', 'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Anon', 'phone', '010', 'governorate_id', 1::smallint, 'city', 'City', 'address', 'Addr', 'notes', NULL)
+)$$,
     'AUTH-004',
     NULL,
     'S18.1: place_order without session returns hint AUTH-004'
@@ -91,9 +92,10 @@ SELECT tests.authenticate_as('s18_buyer');
 -- ----------------------------------------------------------------------------
 SELECT tests.assert_error_code(
     $$SELECT public.place_order(
-        '[]'::jsonb,
-        'representative', 'Buyer', '010', 1::smallint, 'City', 'Addr'
-    )$$,
+    '[]'::jsonb,
+    'representative', 'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Buyer', 'phone', '010', 'governorate_id', 1::smallint, 'city', 'City', 'address', 'Addr', 'notes', NULL)
+)$$,
     'ORD-001',
     NULL,
     'S18.2: place_order with empty cart returns hint ORD-001'
@@ -104,9 +106,10 @@ SELECT tests.assert_error_code(
 -- ----------------------------------------------------------------------------
 SELECT tests.assert_error_code(
     $$SELECT public.place_order(
-        jsonb_build_array(jsonb_build_object('quantity', 1)),
-        'representative', 'Buyer', '010', 1::smallint, 'City', 'Addr'
-    )$$,
+    jsonb_build_array(jsonb_build_object('quantity', 1)),
+    'representative', 'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Buyer', 'phone', '010', 'governorate_id', 1::smallint, 'city', 'City', 'address', 'Addr', 'notes', NULL)
+)$$,
     'ORD-002',
     NULL,
     'S18.3: place_order missing product_id returns hint ORD-002'
@@ -114,9 +117,10 @@ SELECT tests.assert_error_code(
 
 SELECT tests.assert_error_code(
     $$SELECT public.place_order(
-        jsonb_build_array(jsonb_build_object('product_id', 1)),
-        'representative', 'Buyer', '010', 1::smallint, 'City', 'Addr'
-    )$$,
+    jsonb_build_array(jsonb_build_object('product_id', 1)),
+    'representative', 'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Buyer', 'phone', '010', 'governorate_id', 1::smallint, 'city', 'City', 'address', 'Addr', 'notes', NULL)
+)$$,
     'ORD-002',
     NULL,
     'S18.4: place_order missing quantity returns hint ORD-002'
@@ -160,9 +164,10 @@ SELECT tests.assert_error_code(
 -- ----------------------------------------------------------------------------
 SELECT tests.assert_error_code(
     $$SELECT public.place_order(
-        jsonb_build_array(jsonb_build_object('product_id', (SELECT id FROM public.products WHERE name = 'Pearl drop earrings'), 'quantity', 1)),
-        'egypt_post', 'Buyer', '01011112222', 1::smallint, 'City', 'Addr'
-    )$$,
+    jsonb_build_array(jsonb_build_object('product_id', (SELECT id FROM public.products WHERE name = 'Pearl drop earrings'), 'quantity', 1)),
+    'egypt_post', 'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Buyer', 'phone', '01011112222', 'governorate_id', 1::smallint, 'city', 'City', 'address', 'Addr', 'notes', NULL)
+)$$,
     'ORD-004',
     NULL,
     'S18.8: place_order unavailable delivery method returns hint ORD-004'
@@ -173,7 +178,11 @@ SELECT tests.assert_error_code(
 -- ----------------------------------------------------------------------------
 SELECT tests.assert_error_code(
     format(
-        'SELECT public.place_order(jsonb_build_array(jsonb_build_object(''product_id'', %s, ''quantity'', 1)), ''representative'', ''Buyer'', ''010'', 1::smallint, ''City'', ''Addr'')',
+        'SELECT public.place_order(
+    jsonb_build_array(jsonb_build_object(''product_id'', %s, ''quantity'', 1)),
+    ''representative'', ''cod'',
+    jsonb_build_object(''postal_code'', ''11511'', ''name'', ''Buyer'', ''phone'', ''010'', ''governorate_id'', 1::smallint, ''city'', ''City'', ''address'', ''Addr'', ''notes'', NULL)
+)',
         :'inactive_product_id'
     ),
     'ORD-005',
@@ -186,9 +195,10 @@ SELECT tests.assert_error_code(
 -- ----------------------------------------------------------------------------
 SELECT tests.assert_error_code(
     $$SELECT public.place_order(
-        jsonb_build_array(jsonb_build_object('product_id', (SELECT id FROM public.products WHERE name = 'Pearl drop earrings'), 'quantity', 0)),
-        'representative', 'Buyer', '010', 1::smallint, 'City', 'Addr'
-    )$$,
+    jsonb_build_array(jsonb_build_object('product_id', (SELECT id FROM public.products WHERE name = 'Pearl drop earrings'), 'quantity', 0)),
+    'representative', 'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Buyer', 'phone', '010', 'governorate_id', 1::smallint, 'city', 'City', 'address', 'Addr', 'notes', NULL)
+)$$,
     'ORD-006',
     NULL,
     'S18.10: place_order quantity 0 returns hint ORD-006'
@@ -196,9 +206,10 @@ SELECT tests.assert_error_code(
 
 SELECT tests.assert_error_code(
     $$SELECT public.place_order(
-        jsonb_build_array(jsonb_build_object('product_id', (SELECT id FROM public.products WHERE name = 'Pearl drop earrings'), 'quantity', -3)),
-        'representative', 'Buyer', '010', 1::smallint, 'City', 'Addr'
-    )$$,
+    jsonb_build_array(jsonb_build_object('product_id', (SELECT id FROM public.products WHERE name = 'Pearl drop earrings'), 'quantity', -3)),
+    'representative', 'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Buyer', 'phone', '010', 'governorate_id', 1::smallint, 'city', 'City', 'address', 'Addr', 'notes', NULL)
+)$$,
     'ORD-006',
     NULL,
     'S18.11: place_order negative quantity returns hint ORD-006'
@@ -210,7 +221,11 @@ SELECT tests.assert_error_code(
 SELECT stock_quantity FROM public.products WHERE name = 'Pearl drop earrings' \gset p1_
 SELECT tests.assert_error_code(
     format(
-        'SELECT public.place_order(jsonb_build_array(jsonb_build_object(''product_id'', (SELECT id FROM public.products WHERE name = ''Pearl drop earrings''), ''quantity'', %s)), ''representative'', ''Buyer'', ''010'', 1::smallint, ''City'', ''Addr'')',
+        'SELECT public.place_order(
+    jsonb_build_array(jsonb_build_object(''product_id'', (SELECT id FROM public.products WHERE name = ''Pearl drop earrings''), ''quantity'', %s)),
+    ''representative'', ''cod'',
+    jsonb_build_object(''postal_code'', ''11511'', ''name'', ''Buyer'', ''phone'', ''010'', ''governorate_id'', 1::smallint, ''city'', ''City'', ''address'', ''Addr'', ''notes'', NULL)
+)',
         :p1_stock_quantity + 2
     ),
     'ORD-007',
@@ -220,9 +235,10 @@ SELECT tests.assert_error_code(
 
 SELECT tests.assert_error_code(
     $$SELECT public.place_order(
-        jsonb_build_array(jsonb_build_object('product_id', (SELECT id FROM public.products WHERE name = 'Layered silver chain'), 'quantity', 1)),
-        'representative', 'Buyer', '010', 1::smallint, 'City', 'Addr'
-    )$$,
+    jsonb_build_array(jsonb_build_object('product_id', (SELECT id FROM public.products WHERE name = 'Layered silver chain'), 'quantity', 1)),
+    'representative', 'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Buyer', 'phone', '010', 'governorate_id', 1::smallint, 'city', 'City', 'address', 'Addr', 'notes', NULL)
+)$$,
     'ORD-007',
     'left=0',
     'S18.13: place_order out of stock returns hint ORD-007 with detail left=0'
@@ -233,9 +249,10 @@ SELECT tests.assert_error_code(
 -- ----------------------------------------------------------------------------
 SELECT tests.assert_error_code(
     $$SELECT public.place_order(
-        jsonb_build_array(jsonb_build_object('product_id', 999999, 'quantity', 1)),
-        'representative', 'Buyer', '010', 1::smallint, 'City', 'Addr'
-    )$$,
+    jsonb_build_array(jsonb_build_object('product_id', 999999, 'quantity', 1)),
+    'representative', 'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Buyer', 'phone', '010', 'governorate_id', 1::smallint, 'city', 'City', 'address', 'Addr', 'notes', NULL)
+)$$,
     'ORD-008',
     NULL,
     'S18.14: place_order non-existent product returns hint ORD-008'
@@ -254,7 +271,8 @@ SELECT tests.assert_error_code(
 -- Create an order for s18_buyer
 SELECT public.place_order(
     jsonb_build_array(jsonb_build_object('product_id', (SELECT id FROM public.products WHERE name = 'Pearl drop earrings'), 'quantity', 1)),
-    'representative', 'S18 Buyer', '01011112222', 1::smallint, 'Cairo', 'Maadi'
+    'representative', 'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'S18 Buyer', 'phone', '01011112222', 'governorate_id', 1::smallint, 'city', 'Cairo', 'address', 'Maadi', 'notes', NULL)
 ) AS test_order_id \gset
 
 -- Switch to s18_other and try to cancel s18_buyer's order

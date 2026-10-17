@@ -239,7 +239,7 @@ describe('payments api', () => {
       vi.mocked(supabase.rpc).mockResolvedValue({
         data: null,
         error: null,
-      } as unknown as ReturnType<typeof supabase.rpc>)
+      } as unknown as Awaited<ReturnType<typeof supabase.rpc>>)
 
       await submitPaymentProofApi({
         orderId: 10,
@@ -258,7 +258,7 @@ describe('payments api', () => {
       vi.mocked(supabase.rpc).mockResolvedValue({
         data: null,
         error: { message: 'duplicate reference', hint: 'PAY-005', code: '23505' },
-      } as unknown as ReturnType<typeof supabase.rpc>)
+      } as unknown as Awaited<ReturnType<typeof supabase.rpc>>)
 
       try {
         await submitPaymentProofApi({
@@ -277,7 +277,7 @@ describe('payments api', () => {
       vi.mocked(supabase.rpc).mockResolvedValue({
         data: null,
         error: { message: 'deadline passed', hint: 'PAY-001', code: '22023' },
-      } as unknown as ReturnType<typeof supabase.rpc>)
+      } as unknown as Awaited<ReturnType<typeof supabase.rpc>>)
 
       try {
         await submitPaymentProofApi({
@@ -296,7 +296,7 @@ describe('payments api', () => {
       vi.mocked(supabase.rpc).mockResolvedValue({
         data: null,
         error: { message: 'wrong status', hint: 'PAY-004', code: '22023' },
-      } as unknown as ReturnType<typeof supabase.rpc>)
+      } as unknown as Awaited<ReturnType<typeof supabase.rpc>>)
 
       try {
         await submitPaymentProofApi({
@@ -315,7 +315,7 @@ describe('payments api', () => {
       vi.mocked(supabase.rpc).mockResolvedValue({
         data: null,
         error: { message: 'already paid', hint: 'PAY-002', code: '22023' },
-      } as unknown as ReturnType<typeof supabase.rpc>)
+      } as unknown as Awaited<ReturnType<typeof supabase.rpc>>)
 
       try {
         await submitPaymentProofApi({

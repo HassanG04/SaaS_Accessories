@@ -296,9 +296,9 @@ describe('T-9.11: Descriptive Analyses & Analytics Page', () => {
   describe('AnalyticsPage Integration', () => {
     it('fetches insights and renders complete dashboard in Arabic', async () => {
       vi.mocked(supabase.rpc).mockResolvedValueOnce({
-        data: mockInsightsData as unknown as ReturnType<typeof supabase.rpc>,
+        data: mockInsightsData,
         error: null,
-      } as unknown as ReturnType<typeof supabase.rpc>)
+      } as unknown as Awaited<ReturnType<typeof supabase.rpc>>)
 
       renderWithProviders(<AnalyticsPage />)
 
@@ -322,7 +322,7 @@ describe('T-9.11: Descriptive Analyses & Analytics Page', () => {
       vi.mocked(supabase.rpc).mockResolvedValueOnce({
         data: null,
         error: { message: 'Database connection failed' },
-      } as unknown as ReturnType<typeof supabase.rpc>)
+      } as unknown as Awaited<ReturnType<typeof supabase.rpc>>)
 
       renderWithProviders(<AnalyticsPage />)
 
@@ -338,9 +338,9 @@ describe('T-9.11: Descriptive Analyses & Analytics Page', () => {
       const user = userEvent.setup()
 
       vi.mocked(supabase.rpc).mockResolvedValueOnce({
-        data: mockInsightsData as unknown as ReturnType<typeof supabase.rpc>,
+        data: mockInsightsData,
         error: null,
-      } as unknown as ReturnType<typeof supabase.rpc>)
+      } as unknown as Awaited<ReturnType<typeof supabase.rpc>>)
 
       renderWithProviders(<AnalyticsPage />)
 

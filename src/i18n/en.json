@@ -155,7 +155,10 @@
     "fastAndSecure": "Fast & Secure",
     "submit_request": "Submit Order",
     "save_address": "Save this address for my next orders",
-    "approval_note": "We will review your order and send the payment link."
+    "approval_note": "We will review your order and send the payment link.",
+    "postalCodeHint": "e.g. 11511",
+    "postalCodeRequired": "Postal code is required",
+    "postalCodeInvalid": "Postal code must be exactly 5 digits"
   },
   "field": {
     "name": "Full Name",
@@ -165,6 +168,7 @@
     "city": "City or District Center",
     "district": "Neighborhood or Area",
     "address": "Street & Building Number",
+    "postalCode": "Postal Code",
     "floor": "Floor",
     "apartment": "Apartment",
     "landmark": "Nearby Landmark",
@@ -275,6 +279,10 @@
     "floor": "Floor",
     "apartment": "Apartment No.",
     "landmark": "Landmark (optional)",
+    "postalCode": "Postal Code",
+    "postalCodeHint": "e.g. 11511",
+    "postalCodeRequired": "Postal code is required when saving delivery address",
+    "postalCodeInvalid": "Postal code must be exactly 5 digits",
     "securityLink": "Security and two-factor settings →",
     "saveChanges": "Save Changes",
     "saving": "Saving...",

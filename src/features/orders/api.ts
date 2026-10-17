@@ -32,6 +32,7 @@ export async function getMyOrdersApi(): Promise<CustomerOrder[]> {
         ship_city,
         ship_district,
         ship_address,
+        ship_postal_code,
         ship_floor,
         ship_apartment,
         ship_landmark,

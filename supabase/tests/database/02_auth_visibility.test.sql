@@ -89,7 +89,11 @@ SELECT throws_ok(
 
 -- Visitor cannot execute place_order (permission denied)
 SELECT throws_ok(
-    $$SELECT public.place_order('[]'::jsonb, 'representative', 'Eve', '01011111111', 1::smallint, 'Cairo', 'Street 1')$$,
+    $$SELECT public.place_order(
+    '[]'::jsonb,
+    'representative', 'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Eve', 'phone', '01011111111', 'governorate_id', 1::smallint, 'city', 'Cairo', 'address', 'Street 1', 'notes', NULL)
+)$$,
     '42501',
     NULL,
     'S2: Visitor cannot execute place_order (permission denied)'
@@ -230,10 +234,10 @@ UPDATE public.profiles
 -- Insert an order and order item for Alpha
 INSERT INTO public.orders (
     user_id, delivery_method, subtotal, shipping_fee, total,
-    ship_name, ship_phone, ship_governorate, ship_address, status
+    ship_name, ship_phone, ship_governorate, ship_address, ship_postal_code, status
 ) VALUES (
     tests.get_supabase_uid('user_alpha'), 'representative', 200.00, 30.00, 230.00,
-    'Alpha', '01055556666', 'Cairo', 'Alpha Street', 'pending'
+    'Alpha', '01055556666', 'Cairo', 'Alpha Street', '11511', 'pending'
 );
 
 INSERT INTO public.order_items (
@@ -249,10 +253,10 @@ INSERT INTO public.order_items (
 -- Insert an order and order item for Beta
 INSERT INTO public.orders (
     user_id, delivery_method, subtotal, shipping_fee, total,
-    ship_name, ship_phone, ship_governorate, ship_address, status
+    ship_name, ship_phone, ship_governorate, ship_address, ship_postal_code, status
 ) VALUES (
     tests.get_supabase_uid('user_beta'), 'representative', 300.00, 30.00, 330.00,
-    'Beta', '01077778888', 'Giza', 'Beta Street', 'pending'
+    'Beta', '01077778888', 'Giza', 'Beta Street', '11511', 'pending'
 );
 
 INSERT INTO public.order_items (

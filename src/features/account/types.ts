@@ -13,6 +13,7 @@ export interface UpdateProfileInput {
   city: string | null
   district: string | null
   address: string | null
+  postal_code: string | null
   floor: string | null
   apartment: string | null
   landmark: string | null
@@ -26,6 +27,7 @@ export interface ProfileFormState {
   city: string
   district: string
   address: string
+  postal_code: string
   floor: string
   apartment: string
   landmark: string

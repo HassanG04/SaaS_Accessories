@@ -62,11 +62,11 @@ UPDATE public.shop_settings
 SELECT tests.clear_authentication();
 SELECT throws_ok(
     format($$SELECT public.place_order(
-        jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 1)),
-        'representative',
-        'instapay_qr',
-        jsonb_build_object('name', 'Ali', 'phone', '01012345678', 'governorate_id', 1, 'address', 'Nasr City')
-    )$$, :'s23_product_id'),
+    jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 1)),
+    'representative',
+    'instapay_qr',
+    jsonb_build_object('postal_code', '11511', 'name', 'Ali', 'phone', '01012345678', 'governorate_id', 1, 'address', 'Nasr City')
+)$$, :'s23_product_id'),
     '42501',
     'Authentication required',
     'S23: Anon calling place_order raises AUTH-004'
@@ -76,11 +76,11 @@ SELECT throws_ok(
 SELECT tests.authenticate_as('customer1_s23');
 SELECT throws_ok(
     $$SELECT public.place_order(
-        '[]'::jsonb,
-        'representative',
-        'instapay_qr',
-        jsonb_build_object('name', 'Ali', 'phone', '01012345678', 'governorate_id', 1, 'address', 'Nasr City')
-    )$$,
+    '[]'::jsonb,
+    'representative',
+    'instapay_qr',
+    jsonb_build_object('postal_code', '11511', 'name', 'Ali', 'phone', '01012345678', 'governorate_id', 1, 'address', 'Nasr City')
+)$$,
     '22023',
     'Cart is empty',
     'S23: Empty cart raises ORD-001'
@@ -94,11 +94,11 @@ SELECT public.admin_update_setting('payment_methods_enabled', '["cod"]'::jsonb);
 SELECT tests.authenticate_as('customer1_s23');
 SELECT throws_ok(
     format($$SELECT public.place_order(
-        jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 1)),
-        'representative',
-        'instapay_qr',
-        jsonb_build_object('name', 'Ali', 'phone', '01012345678', 'governorate_id', 1, 'address', 'Nasr City')
-    )$$, :'s23_product_id'),
+    jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 1)),
+    'representative',
+    'instapay_qr',
+    jsonb_build_object('postal_code', '11511', 'name', 'Ali', 'phone', '01012345678', 'governorate_id', 1, 'address', 'Nasr City')
+)$$, :'s23_product_id'),
     '22023',
     'Payment method is disabled',
     'S23: Disabled payment method raises ORD-011'
@@ -112,11 +112,11 @@ SELECT public.admin_update_setting('payment_methods_enabled', '["cod", "instapay
 SELECT tests.authenticate_as('customer1_s23');
 SELECT throws_ok(
     format($$SELECT public.place_order(
-        jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 1)),
-        'representative',
-        'instapay_qr',
-        jsonb_build_object('name', 'Ali', 'phone', '01012345678', 'address', 'Nasr City')
-    )$$, :'s23_product_id'),
+    jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 1)),
+    'representative',
+    'instapay_qr',
+    jsonb_build_object('postal_code', '11511', 'name', 'Ali', 'phone', '01012345678', 'address', 'Nasr City')
+)$$, :'s23_product_id'),
     '22023',
     'Governorate ID required',
     'S23: Missing governorate_id raises ORD-003'
@@ -125,39 +125,39 @@ SELECT throws_ok(
 -- 5. Address validation: missing / empty recipient name raises ORD-012
 SELECT throws_ok(
     format($$SELECT public.place_order(
-        jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 1)),
-        'representative',
-        'instapay_qr',
-        jsonb_build_object('name', '', 'phone', '01012345678', 'governorate_id', 1, 'address', 'Nasr City')
-    )$$, :'s23_product_id'),
+    jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 1)),
+    'representative',
+    'instapay_qr',
+    jsonb_build_object('postal_code', '11511', 'name', '', 'phone', '01012345678', 'governorate_id', 1, 'address', 'Nasr City')
+)$$, :'s23_product_id'),
     '22023',
-    'Invalid shipping field length',
+    'Invalid shipping field length or missing required fields',
     'S23: Empty recipient name raises ORD-012'
 );
 
 -- 6. Address validation: oversize name (> 100 chars) raises ORD-012
 SELECT throws_ok(
     format($$SELECT public.place_order(
-        jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 1)),
-        'representative',
-        'instapay_qr',
-        jsonb_build_object('name', repeat('A', 101), 'phone', '01012345678', 'governorate_id', 1, 'address', 'Nasr City')
-    )$$, :'s23_product_id'),
+    jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 1)),
+    'representative',
+    'instapay_qr',
+    jsonb_build_object('postal_code', '11511', 'name', repeat('A', 101), 'phone', '01012345678', 'governorate_id', 1, 'address', 'Nasr City')
+)$$, :'s23_product_id'),
     '22023',
-    'Invalid shipping field length',
+    'Invalid shipping field length or missing required fields',
     'S23: Oversize recipient name raises ORD-012'
 );
 
 -- 7. Address validation: missing / empty address raises ORD-012
 SELECT throws_ok(
     format($$SELECT public.place_order(
-        jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 1)),
-        'representative',
-        'instapay_qr',
-        jsonb_build_object('name', 'Ali', 'phone', '01012345678', 'governorate_id', 1, 'address', '')
-    )$$, :'s23_product_id'),
+    jsonb_build_array(jsonb_build_object('product_id', %s, 'quantity', 1)),
+    'representative',
+    'instapay_qr',
+    jsonb_build_object('postal_code', '11511', 'name', 'Ali', 'phone', '01012345678', 'governorate_id', 1, 'address', '')
+)$$, :'s23_product_id'),
     '22023',
-    'Invalid shipping field length',
+    'Invalid shipping field length or missing required fields',
     'S23: Empty address raises ORD-012'
 );
 
@@ -166,7 +166,7 @@ SELECT public.place_order(
     jsonb_build_array(jsonb_build_object('product_id', :'s23_product_id', 'quantity', 2)),
     'representative',
     'instapay_qr',
-    jsonb_build_object(
+    jsonb_build_object('postal_code', '11511',
         'name', 'Ahmed Hassan',
         'phone', '01012345678',
         'alt_phone', '01098765432',
@@ -221,7 +221,7 @@ SELECT public.place_order(
     jsonb_build_array(jsonb_build_object('product_id', :'s23_product_id', 'quantity', 1)),
     'representative',
     'cod',
-    jsonb_build_object(
+    jsonb_build_object('postal_code', '11511',
         'name', 'Ahmed COD',
         'phone', '01012345678',
         'governorate_id', 1,
@@ -344,7 +344,7 @@ SELECT public.place_order(
     jsonb_build_array(jsonb_build_object('product_id', :'s23_product_id', 'quantity', 1)),
     'representative',
     'instapay_qr',
-    jsonb_build_object('name', 'Cust 2', 'phone', '01012345678', 'governorate_id', 1, 'address', 'Maadi')
+    jsonb_build_object('postal_code', '11511', 'name', 'Cust 2', 'phone', '01012345678', 'governorate_id', 1, 'address', 'Maadi')
 ) AS s23_order2_instapay \gset
 
 SELECT throws_ok(

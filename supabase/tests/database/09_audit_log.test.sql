@@ -103,19 +103,15 @@ SELECT tests.authenticate_as('customer_s21');
 
 SELECT lives_ok(
     format($$SELECT public.place_order(
-        jsonb_build_array(
+    jsonb_build_array(
             jsonb_build_object(
                 'product_id', (SELECT id FROM public.products WHERE is_active LIMIT 1),
                 'quantity', 1
             )
         ),
-        'representative',
-        'Customer S21',
-        '01022220021',
-        1::smallint,
-        'Cairo',
-        'Audit Test St'
-    )$$),
+    'representative', 'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Customer S21', 'phone', '01022220021', 'governorate_id', 1::smallint, 'city', 'Cairo', 'address', 'Audit Test St', 'notes', NULL)
+)$$),
     'S21: Customer places order successfully'
 );
 

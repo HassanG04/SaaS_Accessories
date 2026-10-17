@@ -40,6 +40,7 @@ UPDATE public.profiles
        city = 'مدينة نصر',
        district = 'المنطقة الأولى',
        address = 'شارع عباس العقاد عمارة 15',
+       postal_code = '11511',
        floor = '3',
        apartment = '302',
        landmark = 'بجوار البنك الأهلي'
@@ -69,7 +70,7 @@ SELECT public.place_order(
     jsonb_build_array(jsonb_build_object('product_id', :anon_product_id, 'quantity', 1)),
     'representative'::public.delivery_method,
     'cod'::public.payment_method,
-    jsonb_build_object(
+    jsonb_build_object('postal_code', '11511',
         'name', 'Target Customer',
         'phone', '01022228888',
         'alt_phone', '01122228888',
@@ -178,8 +179,8 @@ SELECT is(
 
 -- Test 10: Profile address columns are null
 SELECT is(
-    (SELECT city || district || address || floor || apartment || landmark 
-       FROM public.profiles 
+    (SELECT city || district || address || floor || apartment || landmark
+       FROM public.profiles
       WHERE id = tests.get_supabase_uid('target_customer_user')),
     NULL,
     'Customer profile address fields are nullified'
@@ -220,7 +221,7 @@ SELECT is(
 -- Test 15: Order optional address fields are nullified
 SELECT is(
     (SELECT ship_city || ship_district || ship_floor || ship_apartment || ship_landmark || coalesce(notes, '')
-       FROM public.orders 
+       FROM public.orders
       WHERE id = :test_order_id),
     NULL,
     'Order optional address and notes fields are nullified'

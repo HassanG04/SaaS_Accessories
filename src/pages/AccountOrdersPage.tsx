@@ -314,6 +314,14 @@ export default function AccountOrdersPage() {
                             : `، شقة ${order.ship_apartment}`
                           : ''}
                       </p>
+                      {order.ship_postal_code && (
+                        <p className="text-caption text-text-muted">
+                          {isEn ? 'Postal Code: ' : 'الرمز البريدي: '}
+                          <span className="font-mono font-medium text-text">
+                            <Ltr>{order.ship_postal_code}</Ltr>
+                          </span>
+                        </p>
+                      )}
                       {order.ship_landmark && (
                         <p className="text-caption text-text-muted">
                           {isEn ? 'Landmark: ' : 'علامة مميزة: '}

@@ -50,12 +50,8 @@ SELECT public.place_order(
             'quantity', 2
         )
     ),
-    'representative',
-    'Buyer A',
-    '01011112222',
-    1::smallint,
-    'Cairo',
-    'Address A'
+    'representative', 'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Buyer A', 'phone', '01011112222', 'governorate_id', 1::smallint, 'city', 'Cairo', 'address', 'Address A', 'notes', NULL)
 ) AS s10_order_id \gset
 
 SELECT ok(
@@ -169,7 +165,8 @@ SELECT public.place_order(
             'quantity', 2
         )
     ),
-    'representative', 'Buyer A', '01011112222', 1::smallint, 'Cairo', 'Addr A'
+    'representative', 'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Buyer A', 'phone', '01011112222', 'governorate_id', 1::smallint, 'city', 'Cairo', 'address', 'Addr A', 'notes', NULL)
 ) AS order_a1 \gset
 
 -- Buyer B places pending Order B1 (qty 1)
@@ -182,7 +179,8 @@ SELECT public.place_order(
             'quantity', 1
         )
     ),
-    'representative', 'Buyer B', '01033334444', 1::smallint, 'Cairo', 'Addr B'
+    'representative', 'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Buyer B', 'phone', '01033334444', 'governorate_id', 1::smallint, 'city', 'Cairo', 'address', 'Addr B', 'notes', NULL)
 ) AS order_b1 \gset
 
 -- Buyer A places Order A2 (qty 1)
@@ -195,7 +193,8 @@ SELECT public.place_order(
             'quantity', 1
         )
     ),
-    'representative', 'Buyer A', '01011112222', 1::smallint, 'Cairo', 'Addr A'
+    'representative', 'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Buyer A', 'phone', '01011112222', 'governorate_id', 1::smallint, 'city', 'Cairo', 'address', 'Addr A', 'notes', NULL)
 ) AS order_a2 \gset
 
 -- Stock is now: 12 - 2 - 1 - 1 = 8. Sold count is 4.

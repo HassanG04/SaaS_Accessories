@@ -130,6 +130,14 @@ export function OrderDetailModal({
                   {order.ship_district ? ` - ${order.ship_district}` : ''}
                 </p>
                 <p className="text-text-muted">{order.ship_address}</p>
+                {order.ship_postal_code && (
+                  <p className="text-caption text-text-muted">
+                    {isAr ? 'الرمز البريدي: ' : 'Postal Code: '}
+                    <span className="font-mono font-medium text-text">
+                      <Ltr>{order.ship_postal_code}</Ltr>
+                    </span>
+                  </p>
+                )}
                 {(order.ship_floor || order.ship_apartment || order.ship_landmark) && (
                   <p className="text-caption text-text-muted">
                     {order.ship_floor ? `${isAr ? 'الدور: ' : 'Floor: '}${order.ship_floor} ` : ''}

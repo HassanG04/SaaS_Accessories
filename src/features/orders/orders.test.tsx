@@ -122,9 +122,10 @@ describe('Orders API', () => {
   })
 
   it('cancelMyOrderApi calls cancel_my_order RPC with p_order_id', async () => {
-    vi.mocked(supabase.rpc).mockResolvedValue({ data: null, error: null } as unknown as ReturnType<
-      typeof supabase.rpc
-    >)
+    vi.mocked(supabase.rpc).mockResolvedValue({
+      data: null,
+      error: null,
+    } as unknown as unknown as Awaited<ReturnType<typeof supabase.rpc>>)
 
     await cancelMyOrderApi(42)
     expect(supabase.rpc).toHaveBeenCalledWith('cancel_my_order', { p_order_id: 42 })
@@ -134,7 +135,7 @@ describe('Orders API', () => {
     vi.mocked(supabase.rpc).mockResolvedValue({
       data: null,
       error: { message: 'Order not found', hint: 'ORD-009' },
-    } as unknown as ReturnType<typeof supabase.rpc>)
+    } as unknown as Awaited<ReturnType<typeof supabase.rpc>>)
 
     await expect(cancelMyOrderApi(42)).rejects.toMatchObject({
       code: 'ORD-009',

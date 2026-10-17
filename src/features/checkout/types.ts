@@ -11,6 +11,7 @@ export interface ShippingAddressForm {
   city: string
   district: string
   address: string
+  postal_code: string
   floor: string
   apartment: string
   landmark: string
@@ -25,6 +26,7 @@ export type PlaceOrderShippingPayload = {
   city?: string | null
   district?: string | null
   address: string
+  postal_code: string
   floor?: string | null
   apartment?: string | null
   landmark?: string | null

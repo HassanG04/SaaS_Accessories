@@ -64,6 +64,7 @@ export default function CheckoutPage() {
     city: profile?.city ?? '',
     district: profile?.district ?? '',
     address: profile?.address ?? '',
+    postal_code: profile?.postal_code ?? '',
     floor: profile?.floor ?? '',
     apartment: profile?.apartment ?? '',
     landmark: profile?.landmark ?? '',
@@ -83,6 +84,7 @@ export default function CheckoutPage() {
       city: prev.city || profile.city || '',
       district: prev.district || profile.district || '',
       address: prev.address || profile.address || '',
+      postal_code: prev.postal_code || profile.postal_code || '',
       floor: prev.floor || profile.floor || '',
       apartment: prev.apartment || profile.apartment || '',
       landmark: prev.landmark || profile.landmark || '',
@@ -229,6 +231,7 @@ export default function CheckoutPage() {
   const cityId = useId()
   const districtId = useId()
   const addressId = useId()
+  const postalCodeId = useId()
   const floorId = useId()
   const aptId = useId()
   const landmarkId = useId()
@@ -505,6 +508,32 @@ export default function CheckoutPage() {
                 {errors.address && (
                   <p id={`${addressId}-error`} role="alert" className="text-small text-danger">
                     {errors.address}
+                  </p>
+                )}
+              </div>
+
+              {/* Postal Code (Required) */}
+              <div className="space-y-1">
+                <label htmlFor={postalCodeId} className="block text-small font-semibold text-text">
+                  {t.field.postalCode} <span className="text-danger">*</span>
+                </label>
+                <input
+                  id={postalCodeId}
+                  type="text"
+                  dir="ltr"
+                  value={formData.postal_code}
+                  onChange={(e) => handleInputChange('postal_code', e.target.value)}
+                  maxLength={5}
+                  placeholder={t.checkout.postalCodeHint}
+                  className={`w-full h-11 rounded-pill border bg-surface px-4 text-body text-text placeholder:text-text-muted focus:border-brand focus:outline-none focus:ring-2 focus:ring-focus ${
+                    errors.postal_code ? 'border-danger' : 'border-border-input'
+                  }`}
+                  aria-invalid={Boolean(errors.postal_code)}
+                  aria-describedby={errors.postal_code ? `${postalCodeId}-error` : undefined}
+                />
+                {errors.postal_code && (
+                  <p id={`${postalCodeId}-error`} role="alert" className="text-small text-danger">
+                    {errors.postal_code}
                   </p>
                 )}
               </div>

@@ -39,12 +39,8 @@ SELECT public.place_order(
             'quantity', 1
         )
     ),
-    'representative',
-    'Customer S19',
-    '01022220019',
-    1::smallint,
-    'Cairo',
-    'Order Street'
+    'representative', 'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Customer S19', 'phone', '01022220019', 'governorate_id', 1::smallint, 'city', 'Cairo', 'address', 'Order Street', 'notes', NULL)
 );
 
 -- ============================================================================

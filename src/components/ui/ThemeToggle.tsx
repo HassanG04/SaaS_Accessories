@@ -1,12 +1,5 @@
 import { useTheme } from './ThemeProvider'
 import { useLanguage } from '../../i18n/LanguageProvider'
-const clamp = (v: number, m: number) => Math.max(-m, Math.min(m, v)).toFixed(1) + 'px'
-const reset = (e: React.SyntheticEvent<HTMLElement>) => {
-  const s = e.currentTarget.style
-  s.removeProperty('--magnetic-x')
-  s.removeProperty('--magnetic-y')
-}
-
 export function ThemeToggle() {
   const { t } = useLanguage()
   const { resolvedTheme, setTheme } = useTheme()
@@ -16,17 +9,6 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      onPointerMove={(e) => {
-        if (e.pointerType !== 'mouse' || document.documentElement.dataset.motion === 'reduced')
-          return
-        const r = e.currentTarget.getBoundingClientRect()
-        if (!r.width) return
-        const s = e.currentTarget.style
-        s.setProperty('--magnetic-x', clamp(((e.clientX - r.left) / r.width - 0.5) * 10, 5))
-        s.setProperty('--magnetic-y', clamp(((e.clientY - r.top) / r.height - 0.5) * 6, 3))
-      }}
-      onPointerLeave={reset}
-      onPointerCancel={reset}
       aria-pressed={isDark}
       aria-label={t.theme.dark}
       title={isDark ? t.theme.switchToLight : t.theme.switchToDark}

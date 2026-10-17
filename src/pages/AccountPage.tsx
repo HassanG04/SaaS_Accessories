@@ -4,7 +4,12 @@ import { useLanguage } from '@/i18n/LanguageProvider'
 import { useAuth } from '@/features/auth/AuthProvider'
 import { useCustomerStats, useUpdateProfile, type ProfileFormState } from '@/features/account'
 import { useGovernorates } from '@/features/delivery'
-import { normalizeEgyptianPhone, isValidEgyptianPhone } from '@/features/checkout/validation'
+import {
+  normalizeEgyptianPhone,
+  isValidEgyptianPhone,
+  normalizePostalCode,
+  isValidPostalCode,
+} from '@/features/checkout/validation'
 import { formatEGP, formatNumber } from '@/lib/format'
 import { useSeo } from '@/features/seo'
 import { Card } from '@/components/ui/Card'
@@ -41,6 +46,7 @@ export default function AccountPage() {
     city: profile?.city || '',
     district: profile?.district || '',
     address: profile?.address || '',
+    postal_code: profile?.postal_code || '',
     floor: profile?.floor || '',
     apartment: profile?.apartment || '',
     landmark: profile?.landmark || '',
@@ -57,6 +63,7 @@ export default function AccountPage() {
       city: profile.city || '',
       district: profile.district || '',
       address: profile.address || '',
+      postal_code: profile.postal_code || '',
       floor: profile.floor || '',
       apartment: profile.apartment || '',
       landmark: profile.landmark || '',
@@ -67,6 +74,7 @@ export default function AccountPage() {
     full_name?: string
     phone?: string
     alt_phone?: string
+    postal_code?: string
   }>({})
 
   useSeo({
@@ -78,7 +86,12 @@ export default function AccountPage() {
   })
 
   const validate = (): boolean => {
-    const errors: { full_name?: string; phone?: string; alt_phone?: string } = {}
+    const errors: {
+      full_name?: string
+      phone?: string
+      alt_phone?: string
+      postal_code?: string
+    } = {}
 
     if (!form.full_name.trim()) {
       errors.full_name = t.account.nameRequired
@@ -97,6 +110,20 @@ export default function AccountPage() {
       const normAlt = normalizeEgyptianPhone(form.alt_phone)
       if (!isValidEgyptianPhone(normAlt)) {
         errors.alt_phone = t.account.altPhoneInvalid
+      }
+    }
+
+    const hasAddress = Boolean(form.address.trim() || form.governorate_id)
+    if (hasAddress) {
+      const normPostal = normalizePostalCode(form.postal_code)
+      if (!normPostal) {
+        errors.postal_code = t.account.postalCodeRequired
+      } else if (!isValidPostalCode(normPostal)) {
+        errors.postal_code = t.account.postalCodeInvalid
+      }
+    } else if (form.postal_code.trim()) {
+      if (!isValidPostalCode(form.postal_code)) {
+        errors.postal_code = t.account.postalCodeInvalid
       }
     }
 
@@ -120,6 +147,7 @@ export default function AccountPage() {
           city: form.city.trim() || null,
           district: form.district.trim() || null,
           address: form.address.trim() || null,
+          postal_code: form.postal_code.trim() ? normalizePostalCode(form.postal_code) : null,
           floor: form.floor.trim() || null,
           apartment: form.apartment.trim() || null,
           landmark: form.landmark.trim() || null,
@@ -404,6 +432,21 @@ export default function AccountPage() {
                 maxLength={150}
                 placeholder={lang === 'ar' ? 'شارع الجمهورية - عمارة 12' : '12 El Gomhouria St'}
               />
+            </div>
+
+            {/* Postal Code */}
+            <div>
+              <Input
+                label={t.account.postalCode}
+                value={form.postal_code}
+                onChange={(e) => setForm({ ...form, postal_code: e.target.value })}
+                maxLength={5}
+                placeholder={t.account.postalCodeHint}
+                dir="ltr"
+              />
+              {fieldErrors.postal_code && (
+                <p className="text-small text-danger mt-1">{fieldErrors.postal_code}</p>
+              )}
             </div>
 
             {/* Floor */}

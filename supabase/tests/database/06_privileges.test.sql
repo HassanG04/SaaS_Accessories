@@ -265,7 +265,11 @@ SELECT throws_ok(
 -- ----------------------------------------------------------------------------
 
 SELECT throws_ok(
-    $$SELECT public.place_order('[]'::jsonb, 'representative', 'Hacker', '010', 1::smallint, 'Cairo', 'Addr')$$,
+    $$SELECT public.place_order(
+    '[]'::jsonb,
+    'representative', 'cod',
+    jsonb_build_object('postal_code', '11511', 'name', 'Hacker', 'phone', '010', 'governorate_id', 1::smallint, 'city', 'Cairo', 'address', 'Addr', 'notes', NULL)
+)$$,
     '42501',
     NULL,
     'S16: Anon cannot execute place_order (permission denied)'

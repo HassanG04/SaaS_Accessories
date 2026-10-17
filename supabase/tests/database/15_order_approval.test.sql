@@ -65,7 +65,7 @@ SELECT public.place_order(
     jsonb_build_array(jsonb_build_object('product_id', :'s32_product_id', 'quantity', 1)),
     'representative',
     'instapay_qr',
-    jsonb_build_object('name', 'Nour', 'phone', '01012345678', 'governorate_id', 1, 'address', 'Maadi Degla')
+    jsonb_build_object('postal_code', '11511', 'name', 'Nour', 'phone', '01012345678', 'governorate_id', 1, 'address', 'Maadi Degla')
 ) AS s32_order1 \gset
 
 -- 1. Order status is pending, payment_status is awaiting_approval, no deadline
@@ -149,7 +149,7 @@ SELECT public.place_order(
     jsonb_build_array(jsonb_build_object('product_id', :'s32_product_id', 'quantity', 1)),
     'representative',
     'instapay_qr',
-    jsonb_build_object('name', 'Nour', 'phone', '01012345678', 'governorate_id', 1, 'address', 'Maadi Degla')
+    jsonb_build_object('postal_code', '11511', 'name', 'Nour', 'phone', '01012345678', 'governorate_id', 1, 'address', 'Maadi Degla')
 ) AS s32_order2 \gset
 
 -- 10. Customer calling admin_reject_order raises ADM-001 (42501)
@@ -227,7 +227,7 @@ SELECT public.place_order(
     jsonb_build_array(jsonb_build_object('product_id', :'s32_product_id', 'quantity', 1)),
     'representative',
     'instapay_qr',
-    jsonb_build_object('name', 'Nour', 'phone', '01012345678', 'governorate_id', 1, 'address', 'Maadi Degla')
+    jsonb_build_object('postal_code', '11511', 'name', 'Nour', 'phone', '01012345678', 'governorate_id', 1, 'address', 'Maadi Degla')
 ) AS s32_order3 \gset
 
 -- 18. Customer calling get_payment_instructions before approval raises PAY-007 (22023)
@@ -324,7 +324,7 @@ SELECT public.place_order(
     jsonb_build_array(jsonb_build_object('product_id', :'s32_product_id', 'quantity', 1)),
     'representative',
     'instapay_qr',
-    jsonb_build_object('name', 'Nour', 'phone', '01012345678', 'governorate_id', 1, 'address', 'Maadi Degla')
+    jsonb_build_object('postal_code', '11511', 'name', 'Nour', 'phone', '01012345678', 'governorate_id', 1, 'address', 'Maadi Degla')
 ) AS s32_order4 \gset
 
 -- Stock before expiration is 47
@@ -402,7 +402,7 @@ SELECT public.place_order(
     jsonb_build_array(jsonb_build_object('product_id', :'s32_product_id', 'quantity', 1)),
     'representative',
     'cod',
-    jsonb_build_object(
+    jsonb_build_object('postal_code', '11511',
         'name', 'Kareem',
         'phone', '01033330032',
         'governorate_id', 1,
@@ -428,7 +428,7 @@ SELECT public.place_order(
     jsonb_build_array(jsonb_build_object('product_id', :'s32_product_id', 'quantity', 1)),
     'representative',
     'cod',
-    jsonb_build_object(
+    jsonb_build_object('postal_code', '11511',
         'name', 'Kareem Work',
         'phone', '01033330032',
         'governorate_id', 1,
@@ -451,7 +451,7 @@ SELECT public.place_order(
     jsonb_build_array(jsonb_build_object('product_id', :'s32_product_id', 'quantity', 1)),
     'representative',
     'cod',
-    jsonb_build_object(
+    jsonb_build_object('postal_code', '11511',
         'name', 'Kareem New Home',
         'phone', '01033330032',
         'governorate_id', 1,

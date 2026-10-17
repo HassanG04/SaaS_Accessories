@@ -236,7 +236,7 @@ describe('T-5.09: Admin site settings API layer', () => {
     const rpcSpy = vi.mocked(supabase.rpc).mockResolvedValue({
       data: null,
       error: null,
-    } as unknown as ReturnType<typeof supabase.rpc>)
+    } as unknown as Awaited<ReturnType<typeof supabase.rpc>>)
 
     await updateAdminSetting('sale_percent', 35)
 
@@ -258,7 +258,7 @@ describe('T-5.09: Admin site settings API layer', () => {
     const rpcSpy = vi.mocked(supabase.rpc).mockResolvedValue({
       data: null,
       error: null,
-    } as unknown as ReturnType<typeof supabase.rpc>)
+    } as unknown as Awaited<ReturnType<typeof supabase.rpc>>)
 
     const fakeFile = new File(['fake-png-content'], 'qr.png', { type: 'image/png' })
     const oldCustomPath = 'settings/instapay-qr-old-uuid.png'
@@ -286,7 +286,7 @@ describe('T-5.09: Admin site settings API layer', () => {
     vi.mocked(supabase.rpc).mockResolvedValue({
       data: null,
       error: null,
-    } as unknown as ReturnType<typeof supabase.rpc>)
+    } as unknown as Awaited<ReturnType<typeof supabase.rpc>>)
 
     const fakeFile = new File(['fake-png'], 'qr.png', { type: 'image/png' })
     await uploadInstaPayQrImage(fakeFile, 'settings/instapay-qr-default.png')

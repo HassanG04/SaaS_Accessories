@@ -79,7 +79,7 @@ async function main() {
       set local role authenticated;
       select set_config('request.jwt.claims','{"sub":"${user}","aal":"aal1"}',true);
       select public.place_order('[{"product_id":${product},"quantity":${qty}}]'::jsonb,
-        'representative','cod','{"name":"S7 buyer","phone":"01011110001","governorate_id":31000,"city":"Cairo","address":"S7 test address"}'::jsonb);\n`
+        'representative','cod','{"postal_code":"11511","name":"S7 buyer","phone":"01011110001","governorate_id":31000,"city":"Cairo","address":"S7 test address"}'::jsonb);\n`
     a = session(nameA)
     a.child.stdin.write(order(buyerA, 2) + '\\echo A_READY\n')
     await until(() => a.stdout.includes('A_READY'), 'buyer A holding its transaction')

@@ -128,8 +128,8 @@ time boundaries, no-history behavior and unauthorized access.
 
 ## Implementation boundary
 
-On this session's check, Docker's Linux engine pipe is missing. Per roadmap 1.5,
-stop database implementation until local reset/test/type generation can run.
+Update 2026-10-18: Docker is available and the owner has paused Anti-Gravity.
+The isolated lolys-db-integration stack can run reset/test/type generation.
 The persistent content editor and reminders above are **specified, not shipped**.
 No hosted CAPTCHA configuration, leaked-password protection, database acceptance,
 production forecast activation, main merge or deployment is claimed here.
