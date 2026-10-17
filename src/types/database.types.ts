@@ -351,6 +351,9 @@ isOneToOne: false
 "admin_update_setting":
 { Args: { "p_key": string,"p_value": Json }; Returns: undefined
                            },
+"admin_update_storefront_content":
+{ Args: { "p_content": Json,"p_expected_updated_at": string }; Returns: string
+                           },
 "audit_event":
 { Args: { "p_action": string,"p_entity": string,"p_entity_id": string,"p_new"?: Json,"p_old"?: Json }; Returns: undefined
                            },

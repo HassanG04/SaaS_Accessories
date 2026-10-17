@@ -776,7 +776,7 @@ Task format and the tool that reads it are defined in Appendix A. Status values:
 - **Verify:** `npm run verify`; focused role/navigation tests and compiled-CSS plus actual-route collision checks.
 
 #### T-3.10c: Persistent storefront and policy content contract
-`status: todo` `owner: agent` `needs: T-5.09, T-1.23` `size: L`
+`status: done` `owner: agent` `needs: T-5.09, T-1.23` `size: L`
 - **Do:** Split additive content contract work into bounded migrations/RPC slices per `docs/spec/store-controls-and-auth-abuse.md`: bilingual hero/image/featured item/category shortcuts, footer branding/labels/contacts and full policy bodies. Preserve private payment settings and approved business content.
 - **Done when:** AAL2, allow-lists, audit, bounded text and storage/reference validation, coherent saves and stale-edit detection pass pgTAP; types regenerated; existing content and RLS preserved. Docker availability is required before implementation.
 - **Verify:** `npm run db:reset && npm run db:test && npm run db:types && npm run verify`
@@ -1611,3 +1611,5 @@ What gets easier, what gets harder, what to watch.
 | 2026-10-18 | T-2.12, T-3.10c, T-5.15, T-9.14 | Codex | Recorded owner scope: limited Arabic settings write contract, fixed hero image/featured item, coded policy bodies and missing occasion notifications. Supabase Free confirmed; native breach screening unavailable. Registered separate content/RLS, editor and calendar reminder slices. Docker now responds; check concurrent agent use before database resets. | pending |
 
 | 2026-10-18 | T-4.08b | Codex | Repaired postal integration and historical UPDATE guards without fabricated backfills. Local reset, 535 pgTAP assertions, S7 concurrency, generated types/check, all 12 verify gates (790 app + 203 tooling), roadmap check pass. Kept T-4.08 doing for genuine hosted backfill/final contract. Original owner transaction acceptance preserved. | pending |
+
+| 2026-10-18 | T-3.10c | Codex | Added atomic bilingual content contract with admin AAL2, bounded values/references, public/private separation, audit evidence and revision conflict detection. Local reset, 560 DB assertions, generated types/check, 796 app + 203 tooling tests and all 12 verify gates passed on rerun. UI editor remains separate T-3.10/T-5.15. | pending |

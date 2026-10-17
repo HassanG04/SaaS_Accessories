@@ -1,5 +1,19 @@
 # Shared project progress
 
+## Codex — Persistent content contract (T-3.10c) — 2026-10-18
+
+Current task: T-3.10c in owner-controls checkout on agent/T-3.10c-storefront-content, stacked on verified postal repair c30a48f / draft PR #37.
+
+Completed: Added the public storefront_content document, AAL2-only atomic save with stale-revision protection, bilingual/type/length/reference/image/contact validation, existing audit logging, generated types and a typed content/upload API. Existing copy remains the fallback; private payment instructions stay separate. The actual homepage/Settings editor and policy rendering are the next slices, not yet shipped.
+
+Files changed: See docs/handoff/CONTENT-CONTRACT.md, migration 20261018100000, database test 20 and updated settings-count fixture, src/features/settings/content.ts, admin/settings/content.api.ts and content.test.ts, generated types and roadmap.
+
+Tests executed: Local reset, 560 pgTAP assertions, generated types/check passed. Six new API/reader/upload tests passed. First full run had an unrelated dashboard worker teardown error; focused dashboard/content rerun passed 18 tests. Full unchanged rerun passed all 12 gates: 796 app + 203 tooling tests, no failures; bundle 199,673/200,000 gzip bytes.
+
+Problems found: Hosted content migration and UI acceptance remain pending. No cloud write, main merge or deployment. Prior approval-service usage limit resolved after owner continuation.
+
+Next action: Finish full verification, checkpoint the contract, implement the shared editor and public content consumers, then add calendar reminders through the notification slice.
+
 ## Codex — Postal integration review (T-4.08b) — 2026-10-18
 
 Current task: T-4.08b in isolated owner-controls checkout, branch agent/T-4.08b-postal-integration. Anti-Gravity paused by owner.
