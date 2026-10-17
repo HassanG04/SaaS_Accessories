@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { AuthAlert } from '../features/auth/AuthAlert'
 import { useAuth } from '../features/auth/AuthProvider'
 import { Turnstile } from '../features/auth/Turnstile'
+import { useCaptcha } from '../features/auth/useCaptcha'
 import type { AuthErrorCode } from '../features/auth/types'
 import { useLanguage } from '@/i18n/LanguageProvider'
 import { Button } from '@/components/ui/Button'
@@ -12,7 +13,7 @@ export default function ResendConfirmationPage() {
   const { t } = useLanguage()
 
   const [email, setEmail] = useState('')
-  const [captchaToken, setCaptchaToken] = useState<string | undefined>()
+  const captcha = useCaptcha()
   const [statusMessage, setStatusMessage] = useState<AuthErrorCode | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -25,16 +26,23 @@ export default function ResendConfirmationPage() {
       return
     }
 
+    if (!captcha.token) {
+      setStatusMessage('AUTH-003')
+      captcha.renew()
+      return
+    }
+
     setIsSubmitting(true)
     try {
       const result = await resendConfirmation({
         email: email.trim(),
-        captchaToken,
+        captchaToken: captcha.token,
       })
 
       // Always display neutral outcome AUTH-010
       setStatusMessage(result.code || 'AUTH-010')
     } finally {
+      captcha.renew()
       setIsSubmitting(false)
     }
   }
@@ -103,7 +111,7 @@ export default function ResendConfirmationPage() {
                 />
               </div>
 
-              <Turnstile onVerify={(token) => setCaptchaToken(token)} />
+              <Turnstile key={captcha.revision} {...captcha.widgetProps} />
 
               <Button
                 type="submit"

@@ -4,6 +4,11 @@ This owner request extends the roadmap. Existing database authority, RLS, safe
 uploads, audit logs and admin AAL2 requirements remain in force. Arabic and
 English must both work. No production change is authorized by this document.
 
+Latest extension (2026-10-18): see `store-controls-and-auth-abuse.md` for
+adaptive login protection on the confirmed Supabase Free plan, persistent hero
+and footer/policy controls, footer-only motion preferences and admin occasion
+reminders. These additions have separate implementation/verification boundaries.
+
 ## Review slices
 
 1. **T-5.13 — Admin usability:** full-width workspace; physically right-hand,

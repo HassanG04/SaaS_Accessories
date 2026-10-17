@@ -1,5 +1,19 @@
 # Shared project progress
 
+## Codex — Authentication challenge lifecycle (T-2.12a) — 2026-10-18
+
+Current task: T-2.12a locally verified on `agent/T-2.12a-challenge-lifecycle` in the isolated owner-controls checkout.
+
+Completed: Stable Turnstile callbacks survive typing/rerenders; Strict Mode cleanup recreates widgets and ignores late callbacks. Production rejects dummy site keys and configuration failures. Synthetic tokens moved to test fixtures. Login, signup, reset and resend discard failed/expired/consumed tokens and renew before retries; registration's resend includes a fresh challenge. Existing Supabase authentication, safe errors and MFA remain in place.
+
+Files changed: `src/features/auth/Turnstile.tsx`, `src/features/auth/Turnstile.test.tsx`, `src/features/auth/useCaptcha.ts`, `src/test-setup.ts`, `src/pages/LoginPage.tsx`, `src/pages/RegisterPage.tsx`, `src/pages/ResetPasswordPage.tsx`, `src/pages/ResendConfirmationPage.tsx`, `roadmap.md`, `.agent-state/project-progress.md`.
+
+Tests executed: Focused auth regression suite 31/31; typecheck; all 12 verify gates passed (786 application + 203 tooling = 989 tests, no skips). Bundle 199,717/200,000 gzip bytes. React hooks/cleanup review completed. No live provider, staging load, hosted database, or remote CI result is implied.
+
+Problems found: Owner confirms Supabase Free, which lacks built-in leaked-password protection. Hosting-side CAPTCHA and rate limits remain owner-verification work. Direct Supabase Auth remains outside the Pages hostname's firewall. Docker engine unavailable. Footer verification count below corrected from the actual log to 779 application tests.
+
+Next action: Register expanded owner content/reminder scope, publish the repair for owner review, and share exact continuation boundaries with Anti-Gravity. Do not merge or deploy.
+
 ## Codex — Footer-only motion control (T-3.11b) — 2026-10-18
 
 Current task: T-3.11b verified locally on `agent/T-3.11b-footer-motion`, isolated from Anti-Gravity's uncommitted T-4.08 work.
@@ -8,7 +22,7 @@ Completed: Removed the motion selector from the hamburger menu per the owner; th
 
 Files changed: `src/components/layout/NavbarQuickMenu.tsx`, `roadmap.md`, `.agent-state/project-progress.md`.
 
-Tests executed: `npm ci --ignore-scripts` and all 12 `npm run verify` gates passed; 777 application tests and 203 tooling tests passed; initial bundle 199,716/200,000 gzip bytes. No hosted deployment or new live-browser acceptance is claimed.
+Tests executed: `npm ci --ignore-scripts` and all 12 `npm run verify` gates passed; 779 application tests and 203 tooling tests passed; initial bundle 199,716/200,000 gzip bytes. No hosted deployment or new live-browser acceptance is claimed.
 
 Problems found: Root checkout is actively changing on the postal task. Docker Linux engine is unavailable. Persistent site content and upcoming-event notifications require database work and remain unfinished.
 

@@ -689,6 +689,18 @@ Task format and the tool that reads it are defined in Appendix A. Status values:
 - **Done when:** Cross-user access denied by database/storage tests; both languages/themes and upload failure paths checked.
 - **Verify:** `npm run db:reset && npm run db:test && npm run verify`
 
+#### T-2.12: Hosted authentication abuse controls
+`status: todo` `owner: human` `needs: T-2.12a` `size: M`
+- **Do:** Owner verifies Managed Turnstile, production hostnames/keys, Supabase CAPTCHA enforcement and endpoint limits. Confirmed plan is Free; native leaked-password protection is unavailable. See `docs/spec/store-controls-and-auth-abuse.md`; any new proxy/breach service needs an ADR before implementation.
+- **Done when:** Bounded staging evidence covers direct-origin missing/forged/expired/replayed tokens, shared-IP legitimate retries, recovery/resend limits and MFA. Record remaining credential-stuffing risk and chosen breach-screening approach; no fabricated device proof or 10,000-bot test.
+- **Verify:** Owner staging acceptance and configuration review; never run a production load attack.
+
+#### T-2.12a: Reliable authentication challenge lifecycle
+`status: done` `owner: agent` `needs: T-2.04` `size: M`
+- **Do:** Repair Turnstile cleanup and callback stability, discard expired/failed/consumed tokens, renew challenges for login/signup/reset/resend, reject dummy keys in production, and isolate synthetic tokens to tests. This supports SEC-05/06; it is not a custom risk engine or proof of hosted CAPTCHA enforcement.
+- **Done when:** Missing/expired challenges cannot submit from the forms; retries remain usable; Strict Mode and late callbacks are safe; neutral auth responses and full verify pass. Hosted controls remain separately owner-verified.
+- **Verify:** `npm run verify`; authentication lifecycle regression tests.
+
 ### Phase 3: Storefront
 
 #### T-3.01: Catalog API
@@ -762,6 +774,12 @@ Task format and the tool that reads it are defined in Appendix A. Status values:
 - **Do:** Add a visible localized storefront Admin entry for the resolved admin role through existing MFA guards. Position offer/sold-out badges opposite the wishlist control with generated logical CSS. The persistent mouse editor remains T-3.10, not satisfied by a navigation link. See `docs/handoff/OWNER-FOLLOWUP-2026-10-17.md`.
 - **Done when:** Guest/customer/admin loading and resolved states behave correctly; offer and heart bounding boxes do not intersect at 320/360/1280 in either direction; controls remain accessible; actual-route checks and verify pass.
 - **Verify:** `npm run verify`; focused role/navigation tests and compiled-CSS plus actual-route collision checks.
+
+#### T-3.10c: Persistent storefront and policy content contract
+`status: todo` `owner: agent` `needs: T-5.09, T-1.23` `size: L`
+- **Do:** Split additive content contract work into bounded migrations/RPC slices per `docs/spec/store-controls-and-auth-abuse.md`: bilingual hero/image/featured item/category shortcuts, footer branding/labels/contacts and full policy bodies. Preserve private payment settings and approved business content.
+- **Done when:** AAL2, allow-lists, audit, bounded text and storage/reference validation, coherent saves and stale-edit detection pass pgTAP; types regenerated; existing content and RLS preserved. Docker availability is required before implementation.
+- **Verify:** `npm run db:reset && npm run db:test && npm run db:types && npm run verify`
 
 #### T-3.11: Explicit site motion preference
 `status: done` `owner: agent` `needs: T-3.09` `size: M`
@@ -946,6 +964,12 @@ Task format and the tool that reads it are defined in Appendix A. Status values:
 - **Do:** Inspect the actual `ip/ip.jpeg` and historical decode evidence in `docs/handoff/DATABASE-INTEGRATION.md`; verify asset delivery and prepare owner-reviewed settings correction to `alaa.ahm9624@instapay`; follow `docs/spec/payment-flow-change.md` and `docs/spec/owner-experience-change.md`. A public file URL is not private merely because its setting has RLS.
 - **Done when:** Owner confirms correct merchant QR in authenticated post-approval flow; no public QR or invented payment URI; payment review remains authoritative.
 - **Verify:** `npm run verify && npm run test:e2e`
+
+#### T-5.15: Complete bilingual footer and policy editor
+`status: todo` `owner: agent` `needs: T-3.10c` `size: L`
+- **Do:** Settings edits footer branding, labels/order, contact details and full Terms/Privacy/Returns/Shipping/Contact copy using the persistent content contract. Reuse the homepage editor contract; no raw HTML or frontend-only saves. See `docs/spec/store-controls-and-auth-abuse.md`.
+- **Done when:** Full policy routes and footer reflect saved content in both languages after reload/in another session; unauthorized writes fail; malformed content, cache invalidation and narrow-screen behavior tested. No invented policy promises.
+- **Verify:** `npm run verify && npm run test:e2e`; local database permission regression tests.
 
 ### Phase 6: Dashboard
 
@@ -1184,6 +1208,12 @@ Task format and the tool that reads it are defined in Appendix A. Status values:
 - **Verify:** review the first run
 
 ---
+
+#### T-9.14: Upcoming occasion reminders for admins
+`status: todo` `owner: agent` `needs: T-9.03, T-2.10` `size: L`
+- **Do:** Expose the existing calendar through an AAL2-only API, show upcoming events in Forecast, and add deduplicated in-app admin reminders with configurable advance notice and read/dismiss state. See `docs/spec/store-controls-and-auth-abuse.md`.
+- **Done when:** Cairo date boundaries, year rollover, uncertain/reviewed holiday dates, no sales history, duplicate generation and unauthorized access tested. Reminders never invent uplift, change prices automatically or activate production forecasting.
+- **Verify:** `npm run db:reset && npm run db:test && npm run db:types && npm run analytics:test && npm run verify && npm run test:e2e`
 
 ## Appendix A: Task format and the roadmap tool
 
@@ -1566,4 +1596,8 @@ What gets easier, what gets harder, what to watch.
 | 0004 | Analytics stack and synthetic time series pipeline | accepted (T-9.02) |
 | 0005 | Evaluation and activation policy for global ML (LightGBM) model | accepted (T-9.06) |
 
-| 2026-10-18 | T-3.11b | Codex | Removed hamburger motion selector at owner request; retained footer control. Isolated checkout; npm ci and full verify passed (777 app + 203 tooling tests; 199,716/200,000 gzip bytes). No hosted deployment or production acceptance claimed. | pending |
+| 2026-10-18 | T-3.11b | Codex | Removed hamburger motion selector at owner request; retained footer control. Isolated checkout; npm ci and full verify passed (779 app + 203 tooling tests; 199,716/200,000 gzip bytes). No hosted deployment or production acceptance claimed. | pending |
+
+| 2026-10-18 | T-2.12a | Codex | Fixed challenge teardown on typing, Strict Mode cleanup and stale callbacks; removed production dummy-key fallback and synthetic test token; auth forms renew consumed challenges and discard failed/expired tokens. SEC-05/06 owner review required. All 12 verify gates pass: 786 app + 203 tooling tests; 199,717/200,000 gzip bytes. Hosted CAPTCHA/rate-limit enforcement is not verified. | pending |
+
+| 2026-10-18 | T-2.12, T-3.10c, T-5.15, T-9.14 | Codex | Recorded owner scope: limited Arabic settings write contract, fixed hero image/featured item, coded policy bodies and missing occasion notifications. Supabase Free confirmed; native breach screening unavailable. Registered separate content/RLS, editor and calendar reminder slices. Docker now responds; check concurrent agent use before database resets. | pending |

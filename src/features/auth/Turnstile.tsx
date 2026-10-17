@@ -30,43 +30,49 @@ export interface TurnstileProps {
 export function Turnstile({ onVerify, onError, onExpire, className = '' }: TurnstileProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const widgetIdRef = useRef<string | null>(null)
+  const callbacks = useRef({ onVerify, onError, onExpire })
 
   useEffect(() => {
-    let siteKey = '1x00000000000000000000AA'
+    callbacks.current = { onVerify, onError, onExpire }
+  }, [onVerify, onError, onExpire])
+
+  useEffect(() => {
+    let siteKey: string
     try {
-      const env = getEnv()
-      if (env.VITE_TURNSTILE_SITE_KEY) {
-        siteKey = env.VITE_TURNSTILE_SITE_KEY
-      }
+      siteKey = getEnv().VITE_TURNSTILE_SITE_KEY
     } catch {
-      // fallback if env is not configured in test
+      callbacks.current.onError?.()
+      return
     }
 
-    // Test environment mock: emit synthetic token only during automated tests
-    if (import.meta.env.MODE === 'test') {
-      const timer = setTimeout(() => {
-        onVerify('test-turnstile-token')
-      }, 0)
-      return () => clearTimeout(timer)
+    // Cloudflare's documented dummy keys must never protect a production form.
+    if (import.meta.env.PROD && /^[123]x0+[A-Z]{2}$/.test(siteKey)) {
+      callbacks.current.onError?.()
+      return
     }
 
-    if (typeof window === 'undefined') return
-
+    let disposed = false
     let checkInterval: ReturnType<typeof setInterval> | null = null
 
     const renderWidget = () => {
-      if (containerRef.current && window.turnstile && !widgetIdRef.current) {
+      if (!disposed && containerRef.current && window.turnstile && !widgetIdRef.current) {
         try {
           const id = window.turnstile.render(containerRef.current, {
             sitekey: siteKey,
-            callback: onVerify,
-            'error-callback': onError,
-            'expired-callback': onExpire,
+            callback: (token) => {
+              if (!disposed) callbacks.current.onVerify(token)
+            },
+            'error-callback': () => {
+              if (!disposed) callbacks.current.onError?.()
+            },
+            'expired-callback': () => {
+              if (!disposed) callbacks.current.onExpire?.()
+            },
             theme: 'auto',
           })
           widgetIdRef.current = id
         } catch {
-          onError?.()
+          callbacks.current.onError?.()
         }
       }
     }
@@ -83,12 +89,13 @@ export function Turnstile({ onVerify, onError, onExpire, className = '' }: Turns
         } else if (attempts > 50) {
           // Timeout after 5s
           if (checkInterval) clearInterval(checkInterval)
-          onError?.()
+          callbacks.current.onError?.()
         }
       }, 100)
     }
 
     return () => {
+      disposed = true
       if (checkInterval) clearInterval(checkInterval)
       if (widgetIdRef.current && window.turnstile?.remove) {
         try {
@@ -97,8 +104,9 @@ export function Turnstile({ onVerify, onError, onExpire, className = '' }: Turns
           // ignore cleanup errors
         }
       }
+      widgetIdRef.current = null
     }
-  }, [onVerify, onError, onExpire])
+  }, [])
 
   return (
     <div

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { AuthAlert } from '../features/auth/AuthAlert'
 import { useAuth } from '../features/auth/AuthProvider'
 import { Turnstile } from '../features/auth/Turnstile'
+import { useCaptcha } from '../features/auth/useCaptcha'
 import { validatePasswordStrength } from '../features/auth/passwordStrength'
 import type { AuthErrorCode } from '../features/auth/types'
 import { useLanguage } from '@/i18n/LanguageProvider'
@@ -17,22 +18,23 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [captchaToken, setCaptchaToken] = useState<string | undefined>()
+  const captcha = useCaptcha()
   const [statusMessage, setStatusMessage] = useState<AuthErrorCode | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isResending, setIsResending] = useState(false)
   const [resendSent, setResendSent] = useState(false)
 
   async function handleResend() {
-    if (isResending || !email.trim()) return
+    if (isResending || !email.trim() || !captcha.token) return
     setIsResending(true)
     setResendSent(false)
     try {
-      const result = await resendConfirmation({ email: email.trim() })
+      const result = await resendConfirmation({ email: email.trim(), captchaToken: captcha.token })
       if (result.success) {
         setResendSent(true)
       }
     } finally {
+      captcha.renew()
       setIsResending(false)
     }
   }
@@ -56,13 +58,19 @@ export default function RegisterPage() {
       return
     }
 
+    if (!captcha.token) {
+      setStatusMessage('AUTH-003')
+      captcha.renew()
+      return
+    }
+
     setIsSubmitting(true)
     try {
       const result = await signUp({
         fullName: fullName.trim(),
         email: email.trim(),
         password,
-        captchaToken,
+        captchaToken: captcha.token,
       })
 
       if (!result.success) {
@@ -71,6 +79,7 @@ export default function RegisterPage() {
         setStatusMessage(result.code || 'AUTH-010')
       }
     } finally {
+      captcha.renew()
       setIsSubmitting(false)
     }
   }
@@ -112,6 +121,7 @@ export default function RegisterPage() {
               <p className="text-caption text-(--color-text-muted)">{t.auth.checkSpamFolder}</p>
             </div>
             <div className="pt-2 space-y-2">
+              {!resendSent && <Turnstile key={captcha.revision} {...captcha.widgetProps} />}
               {resendSent ? (
                 <p
                   role="status"
@@ -124,7 +134,7 @@ export default function RegisterPage() {
                 <button
                   type="button"
                   onClick={handleResend}
-                  disabled={isResending}
+                  disabled={isResending || !captcha.token}
                   className="inline-flex h-10 items-center justify-center rounded-(--radius-pill) border border-(--color-border-input) bg-(--color-surface) px-4 text-small font-semibold text-(--color-brand) hover:bg-(--color-surface-2) focus:outline-none focus:ring-2 focus:ring-(--color-focus) disabled:opacity-50"
                 >
                   {isResending ? t.auth.sendingConfirmationLink : t.auth.resendNoticeLink}
@@ -212,7 +222,7 @@ export default function RegisterPage() {
                 />
               </div>
 
-              <Turnstile onVerify={(token) => setCaptchaToken(token)} />
+              <Turnstile key={captcha.revision} {...captcha.widgetProps} />
 
               <Button
                 type="submit"

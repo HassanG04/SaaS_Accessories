@@ -4,6 +4,7 @@ import { AuthAlert } from '../features/auth/AuthAlert'
 import { mapAuthError } from '../features/auth/authErrors'
 import { useAuth } from '../features/auth/AuthProvider'
 import { Turnstile } from '../features/auth/Turnstile'
+import { useCaptcha } from '../features/auth/useCaptcha'
 import type { AuthErrorCode } from '../features/auth/types'
 import { useLanguage } from '@/i18n/LanguageProvider'
 import { Button } from '@/components/ui/Button'
@@ -17,7 +18,7 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [captchaToken, setCaptchaToken] = useState<string | undefined>()
+  const captcha = useCaptcha()
   const [formErrorCode, setFormErrorCode] = useState<AuthErrorCode | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -58,12 +59,18 @@ export default function LoginPage() {
       return
     }
 
+    if (!captcha.token) {
+      setFormErrorCode('AUTH-003')
+      captcha.renew()
+      return
+    }
+
     setIsSubmitting(true)
     try {
       const result = await signIn({
         email: email.trim(),
         password,
-        captchaToken,
+        captchaToken: captcha.token,
       })
 
       if (!result.success) {
@@ -72,6 +79,7 @@ export default function LoginPage() {
         navigate(redirectTo, { replace: true })
       }
     } finally {
+      captcha.renew()
       setIsSubmitting(false)
     }
   }
@@ -153,7 +161,7 @@ export default function LoginPage() {
             />
           </div>
 
-          <Turnstile onVerify={(token) => setCaptchaToken(token)} />
+          <Turnstile key={captcha.revision} {...captcha.widgetProps} />
 
           <Button
             type="submit"

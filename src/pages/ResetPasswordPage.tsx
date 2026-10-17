@@ -4,6 +4,7 @@ import { AuthAlert } from '../features/auth/AuthAlert'
 import { mapAuthError } from '../features/auth/authErrors'
 import { useAuth } from '../features/auth/AuthProvider'
 import { Turnstile } from '../features/auth/Turnstile'
+import { useCaptcha } from '../features/auth/useCaptcha'
 import type { AuthErrorCode } from '../features/auth/types'
 import { useLanguage } from '@/i18n/LanguageProvider'
 import { Button } from '@/components/ui/Button'
@@ -14,7 +15,7 @@ export default function ResetPasswordPage() {
   const location = useLocation()
 
   const [email, setEmail] = useState('')
-  const [captchaToken, setCaptchaToken] = useState<string | undefined>()
+  const captcha = useCaptcha()
   const [formStatusMessage, setFormStatusMessage] = useState<AuthErrorCode | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -47,16 +48,23 @@ export default function ResetPasswordPage() {
       return
     }
 
+    if (!captcha.token) {
+      setFormStatusMessage('AUTH-003')
+      captcha.renew()
+      return
+    }
+
     setIsSubmitting(true)
     try {
       const result = await resetPassword({
         email: email.trim(),
-        captchaToken,
+        captchaToken: captcha.token,
       })
 
       // Always display neutral outcome AUTH-010
       setFormStatusMessage(result.code || 'AUTH-010')
     } finally {
+      captcha.renew()
       setIsSubmitting(false)
     }
   }
@@ -102,7 +110,7 @@ export default function ResetPasswordPage() {
             <Button
               variant="secondary"
               onClick={() => {
-                setCaptchaToken(undefined)
+                captcha.renew()
                 setFormStatusMessage(null)
               }}
             >
@@ -132,7 +140,7 @@ export default function ResetPasswordPage() {
                 />
               </div>
 
-              <Turnstile onVerify={(token) => setCaptchaToken(token)} />
+              <Turnstile key={captcha.revision} {...captcha.widgetProps} />
 
               <Button
                 type="submit"
