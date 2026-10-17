@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react'
+import { lazy, Suspense, useContext, useState, useMemo } from 'react'
+import { AuthContext } from '@/features/auth/AuthProvider'
 import { Link } from 'react-router-dom'
 import { useLanguage } from '@/i18n/LanguageProvider'
 import {
@@ -20,7 +21,10 @@ import { Card } from '@/components/ui/Card'
 import { SectionReveal } from '@/components/ui/SectionReveal'
 import { isMotionReduced } from '@/lib/motion'
 
+const ContentEditorLauncher = lazy(() => import('@/features/admin/settings/ContentEditorLauncher'))
+
 export default function HomePage() {
+  const auth = useContext(AuthContext)
   const { t, lang } = useLanguage()
   const { data: settings } = usePublicSettings()
   const {
@@ -107,6 +111,11 @@ export default function HomePage() {
 
   return (
     <div className="space-y-16 pb-16">
+      {auth?.profile?.role === 'admin' && (
+        <Suspense fallback={null}>
+          <ContentEditorLauncher />
+        </Suspense>
+      )}
       {/* 1. HERO SECTION */}
       <section
         aria-label="Hero"

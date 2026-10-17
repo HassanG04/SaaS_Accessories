@@ -781,6 +781,12 @@ Task format and the tool that reads it are defined in Appendix A. Status values:
 - **Done when:** AAL2, allow-lists, audit, bounded text and storage/reference validation, coherent saves and stale-edit detection pass pgTAP; types regenerated; existing content and RLS preserved. Docker availability is required before implementation.
 - **Verify:** `npm run db:reset && npm run db:test && npm run db:types && npm run verify`
 
+#### T-3.10d: Shared bilingual storefront content editor
+`status: doing` `owner: agent` `needs: T-3.10c` `size: M`
+- **Do:** Build one lazy editor for Settings and the homepage mouse control, using the audited content API. Include image upload, product search, category ordering, bilingual content, safe preview, conflict handling and cache invalidation. Public rendering follows as a separate T-3.10e/T-5.15 slice.
+- **Done when:** Authorized admins can edit and persist the document; drafts survive conflicts, protected writes remain server-enforced, and editor tests/verify pass.
+- **Verify:** `npm run verify`
+
 #### T-3.11: Explicit site motion preference
 `status: done` `owner: agent` `needs: T-3.09` `size: M`
 - **Do:** Implement the owner's new explicit request: Full animations by default even with device animations off; visitor-selectable Reduced and Follow device modes. Use a persisted effective policy shared by CSS/JS, replacing conflicting direct OS guards without breaking dialogs, touch behavior, skeletons or visible content. See the latest owner follow-up.

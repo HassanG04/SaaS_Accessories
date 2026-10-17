@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ChangeEvent } from 'react'
+import { lazy, Suspense, useState, type FormEvent, type ChangeEvent } from 'react'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -20,6 +20,8 @@ import {
 } from './hooks'
 import { getPublicQrUrl } from './api'
 import type { ShopSettingsMap, SettingKey, SettingsAuditEntry } from './types'
+
+const ContentEditorLauncher = lazy(() => import('@/features/admin/settings/ContentEditorLauncher'))
 
 export const SETTING_LABELS: Record<SettingKey, { ar: string; en: string }> = {
   shop_name_ar: { ar: 'اسم المتجر (بالعربية)', en: 'Shop Name (Arabic)' },
@@ -285,6 +287,10 @@ export default function SettingsPage() {
           <ErrorMessage error={sectionError} />
         </div>
       )}
+
+      <Suspense fallback={null}>
+        <ContentEditorLauncher />
+      </Suspense>
 
       {/* Navigation Tabs */}
       <div className="flex flex-wrap gap-2 border-b border-border pb-2">

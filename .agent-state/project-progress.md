@@ -1,5 +1,19 @@
 # Shared project progress
 
+## Codex — Shared content editor (T-3.10d) — 2026-10-18
+
+Current task: T-3.10d implemented in owner-controls checkout. Public consumers are next; visual browser acceptance remains pending.
+
+Completed: Shared lazy editor in Settings and the admin-only homepage mouse control; image click-to-upload, product search, category selection/order, Arabic/English fields, policy/footer forms, escaped preview, conflict-preserved draft and public/audit cache invalidation.
+
+Files changed: ContentEditor.tsx, ContentEditorLauncher.tsx, ContentEditor.test.tsx, src/i18n/contentEditor.ts, SettingsPage.tsx, HomePage.tsx and roadmap.
+
+Tests executed: 36 focused tests pass. All 12 verify gates pass: 801 app + 203 tooling tests; bundle 199,674/200,000 gzip bytes. No actual browser visual acceptance claimed.
+
+Problems found: Saved content still needs public homepage/footer/policy consumers. Keep overall T-3.10 and T-5.15 incomplete until those consumers and visual checks pass. Hosted migrations and primary preview remain unchanged.
+
+Next action: Connect public consumers under T-3.10e, then browser acceptance. Anti-Gravity remains paused.
+
 ## Codex — Persistent content contract (T-3.10c) — 2026-10-18
 
 Current task: T-3.10c in owner-controls checkout on agent/T-3.10c-storefront-content, stacked on verified postal repair c30a48f / draft PR #37.
